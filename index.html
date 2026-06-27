@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Friend or Fire? — desire through Theravāda Buddhism (v2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15100c;--ink-deep:#0c0807;--ember:#ff7a1a;--ember-bright:#ff8f3d;
+  --gold:#ffc24b;--ash:#f3e9d9;--clay:#b89a7f;--jade:#56c2a7;--jade-deep:#2f6f63;--maxw:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--ink-deep);color:var(--ash);font-family:"Hanken Grotesk",system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+#ambient{position:fixed;inset:0;z-index:0;pointer-events:none}
+.glow{position:fixed;left:50%;bottom:-22vh;transform:translateX(-50%);width:90vw;height:70vh;z-index:0;pointer-events:none;
+  background:radial-gradient(50% 60% at 50% 100%, rgba(255,122,26,.32), rgba(255,122,26,.10) 38%, transparent 66%);transition:opacity 1.6s,filter 1.6s}
+body.settled .glow{background:radial-gradient(50% 60% at 50% 100%, rgba(86,194,167,.20), rgba(255,194,75,.08) 42%, transparent 68%)}
+.deck{position:relative;z-index:2;height:100%}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  padding:clamp(26px,5.4vw,84px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s}
+.slide.active{opacity:1;visibility:visible;pointer-events:auto}
+.inner{width:100%;max-width:var(--maxw);margin:0 auto}
+.eyebrow{font-family:"Space Mono",monospace;font-size:clamp(11px,1.1vw,14px);letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.eyebrow::before{content:"";width:30px;height:1px;background:var(--ember);display:inline-block}
+.eyebrow.c{justify-content:center}
+h1{font-family:"Fraunces",serif;font-weight:900;line-height:.95;font-size:clamp(54px,11vw,150px);letter-spacing:-.02em}
+h2{font-family:"Fraunces",serif;font-weight:600;line-height:1.02;font-size:clamp(32px,5.6vw,72px);letter-spacing:-.015em}
+.lede{font-size:clamp(18px,2.2vw,28px);line-height:1.45;color:var(--ash);max-width:30ch;margin-top:8px}
+.sub{font-size:clamp(16px,1.95vw,24px);line-height:1.5;color:var(--clay);max-width:40ch;margin-top:22px}
+.em{color:var(--ember-bright)}.emg{color:var(--gold)}.jade{color:var(--jade)}
+.serif-i{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
+.pron{font-family:"Space Mono",monospace;color:var(--gold);font-size:clamp(13px,1.5vw,17px);letter-spacing:.06em;margin-top:12px}
+.tiny{font-family:"Space Mono",monospace;font-size:13px;letter-spacing:.04em;color:var(--clay)}
+[data-anim]{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s cubic-bezier(.2,.7,.2,1)}
+.slide.active [data-anim].in{opacity:1;transform:none}
+.center{align-items:center;text-align:center}.center .inner{display:flex;flex-direction:column;align-items:center}
+
+/* nav */
+.nav{position:fixed;z-index:30;right:clamp(20px,3vw,40px);bottom:clamp(20px,3vw,36px);display:flex;gap:10px;align-items:center}
+.nav button{width:46px;height:46px;border-radius:50%;border:1px solid rgba(243,233,217,.22);background:rgba(255,255,255,.03);
+  color:var(--ash);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(4px)}
+.nav button:hover{border-color:var(--ember);color:var(--gold);transform:translateY(-2px)}
+.nav button:disabled{opacity:.28;cursor:default;transform:none}
+.counter{font-family:"Space Mono",monospace;font-size:13px;color:var(--clay);min-width:48px;text-align:center}
+.dots{position:fixed;z-index:30;left:50%;transform:translateX(-50%);bottom:22px;display:flex;gap:6px}
+.dots i{width:7px;height:7px;border-radius:50%;background:rgba(243,233,217,.22);cursor:pointer;transition:.25s}
+.dots i.on{background:var(--ember);width:22px;border-radius:4px}
+.kbhint{position:fixed;z-index:30;left:clamp(20px,3vw,40px);bottom:clamp(22px,3vw,34px);font-family:"Space Mono",monospace;font-size:12px;color:rgba(184,154,127,.7)}
+
+/* flame */
+.flame{position:relative;width:120px;height:160px;filter:drop-shadow(0 0 40px rgba(255,122,26,.55))}
+.flame .body{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:78px;height:120px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+  background:radial-gradient(40% 60% at 50% 70%, var(--gold), var(--ember) 55%, #c43c00 100%);transform-origin:bottom center;animation:flick 2.4s ease-in-out infinite}
+.flame .core{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:34px;height:64px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+  background:radial-gradient(50% 60% at 50% 70%, #fff5d6, var(--gold) 70%);animation:flick 1.7s ease-in-out infinite reverse;opacity:.9}
+@keyframes flick{0%,100%{transform:translateX(-50%) rotate(-2deg) scaleY(1)}25%{transform:translateX(-52%) rotate(2deg) scaleY(1.06)}
+  50%{transform:translateX(-49%) rotate(-1deg) scaleY(.97)}75%{transform:translateX(-51%) rotate(1.5deg) scaleY(1.04)}}
+
+/* buttons */
+.btn{font-family:"Hanken Grotesk";font-weight:600;font-size:clamp(15px,1.5vw,18px);color:var(--ink-deep);
+  background:linear-gradient(180deg,var(--gold),var(--ember));border:none;border-radius:40px;padding:13px 24px;cursor:pointer;
+  box-shadow:0 8px 30px rgba(255,122,26,.30);transition:.18s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(255,122,26,.42)}
+.btn:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--ash);border:1px solid rgba(243,233,217,.3);box-shadow:none}
+.btn.ghost:hover{border-color:var(--jade);color:var(--jade)}
+.btn.calm{background:linear-gradient(180deg,#7fe0c8,var(--jade));box-shadow:0 8px 30px rgba(86,194,167,.32)}
+
+/* SLIDE 2 — spectrum */
+.spec{width:100%;margin-top:8px}
+.spectrack{position:relative;height:90px;border-radius:14px;margin:10px 0 8px;
+  background:linear-gradient(90deg,rgba(255,122,26,.22),rgba(184,154,127,.10) 50%,rgba(86,194,167,.22))}
+.spectrack .lbl{position:absolute;bottom:8px;font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.06em}
+.spectrack .lbl.l{left:14px;color:var(--ember-bright)}.spectrack .lbl.m{left:50%;transform:translateX(-50%);color:var(--clay)}
+.spectrack .lbl.r{right:14px;color:var(--jade)}
+.placed{position:absolute;top:8px;transform:translateX(-50%);background:rgba(12,8,7,.85);border:1px solid rgba(255,194,75,.4);
+  border-radius:20px;padding:5px 11px;font-size:13px;white-space:nowrap;opacity:0;transition:.5s}
+.placed.on{opacity:1}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;min-height:44px}
+.chip{font-size:clamp(13px,1.5vw,16px);padding:9px 15px;border-radius:22px;border:1px solid rgba(243,233,217,.28);
+  background:rgba(255,255,255,.03);cursor:pointer;transition:.2s}
+.chip:hover{border-color:var(--gold);transform:translateY(-2px)}
+.chip.used{opacity:0;pointer-events:none;transform:scale(.6)}
+.why{font-family:"Space Mono",monospace;font-size:13px;color:var(--gold);min-height:20px;margin-top:14px}
+.specpunch{opacity:.3;transition:.6s}
+
+/* SLIDE 3 — sort game */
+.sortwrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;width:100%}
+.sortcard{border-radius:18px;border:1px solid rgba(243,233,217,.16);background:rgba(255,255,255,.03);
+  padding:30px;text-align:center;min-height:150px;display:flex;flex-direction:column;justify-content:center}
+.sortcard .item{font-family:"Fraunces",serif;font-size:clamp(22px,2.6vw,30px);font-weight:600}
+.sortbtns{display:flex;gap:12px;margin-top:22px;justify-content:center}
+.sortfeed{font-size:16px;line-height:1.4;color:var(--clay);min-height:48px;margin-top:16px}
+.score{font-family:"Space Mono",monospace;font-size:12px;color:var(--clay);margin-top:8px}
+.defcol .d{border-radius:14px;padding:18px 20px;margin-bottom:12px;border:1px solid rgba(243,233,217,.14)}
+.defcol .d.t{background:linear-gradient(160deg,rgba(255,122,26,.12),transparent)}
+.defcol .d.c{background:linear-gradient(160deg,rgba(86,194,167,.12),transparent)}
+.defcol .d h4{font-family:"Fraunces",serif;font-size:21px;font-weight:600;margin-bottom:4px}
+.defcol .d.t h4{color:var(--ember-bright)}.defcol .d.c h4{color:var(--jade)}
+.defcol .d p{font-size:14px;line-height:1.4;color:var(--clay)}
+.defcol .d .pp{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.06em;color:var(--gold)}
+
+/* reveal grid (4 / 5 cards) */
+.revgrid{display:grid;gap:14px;width:100%;margin-top:14px}
+.revgrid.four{grid-template-columns:repeat(2,1fr)}
+.revgrid.five{grid-template-columns:repeat(5,1fr)}
+.revgrid.three{grid-template-columns:repeat(3,1fr)}
+.rev{border-radius:16px;border:1px solid rgba(243,233,217,.15);background:rgba(255,255,255,.025);
+  padding:22px;cursor:pointer;transition:.3s;min-height:140px;display:flex;flex-direction:column;gap:8px}
+.rev:hover{border-color:var(--ember);transform:translateY(-3px)}
+.rev .rg{font-size:30px}
+.rev h4{font-family:"Fraunces",serif;font-size:clamp(17px,1.9vw,22px);font-weight:600;line-height:1.05}
+.rev p{font-size:14px;line-height:1.45;color:var(--clay);opacity:0;max-height:0;overflow:hidden;transition:.45s}
+.rev.open{background:rgba(255,122,26,.10);border-color:var(--ember)}
+.rev.open p{opacity:1;max-height:200px}
+.rev .pp{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.06em;color:var(--gold)}
+.revgrid.five .rev{min-height:110px;padding:16px}
+.revgrid.five .rev h4{font-size:clamp(14px,1.5vw,17px)}
+.revgrid.five .rev p{font-size:12.5px}
+
+/* SLIDE 7 — stepper */
+.stepwrap{display:grid;grid-template-columns:1fr 1.1fr;gap:44px;align-items:center;width:100%}
+.steplamp{position:relative;height:clamp(220px,36vh,320px);display:flex;align-items:center;justify-content:center}
+.steplamp .ring{position:absolute;width:200px;height:200px;border-radius:50%;border:1px dashed rgba(243,233,217,.22);animation:spin 24s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.steplamp .eye{position:absolute;bottom:6px;font-family:"Space Mono",monospace;font-size:12px;color:var(--clay)}
+.stepbody{}
+.stepnum{font-family:"Space Mono",monospace;color:var(--gold);font-size:13px;letter-spacing:.1em}
+.steptitle{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(26px,3.4vw,42px);margin:6px 0 12px;line-height:1.05}
+.stepdesc{font-size:clamp(15px,1.8vw,20px);line-height:1.5;color:var(--clay);min-height:84px}
+.stepbar{display:flex;gap:6px;margin:20px 0}
+.stepbar i{flex:1;height:4px;border-radius:3px;background:rgba(243,233,217,.18);transition:.3s}
+.stepbar i.on{background:var(--ember)}
+.steplamp.fade .flame{filter:drop-shadow(0 0 40px rgba(255,122,26,.3)) saturate(.6) brightness(.8);transition:1s}
+.steplamp.cultivate .flame{filter:drop-shadow(0 0 50px rgba(86,194,167,.5)) hue-rotate(110deg) saturate(.85);transition:1.2s}
+
+/* SLIDE 8 — diagnostic */
+.diagwrap{width:100%;margin-top:10px}
+.qrow{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(243,233,217,.1)}
+.qrow .qt{font-size:clamp(15px,1.7vw,19px);line-height:1.3}
+.qrow .opts{display:flex;gap:8px;flex:none}
+.pill{font-family:"Hanken Grotesk";font-size:13px;padding:7px 14px;border-radius:20px;border:1px solid rgba(243,233,217,.25);
+  background:transparent;color:var(--ash);cursor:pointer;transition:.18s;white-space:nowrap}
+.pill:hover{border-color:var(--gold)}
+.pill.pick-grip{background:rgba(255,122,26,.18);border-color:var(--ember);color:var(--gold)}
+.pill.pick-ease{background:rgba(86,194,167,.18);border-color:var(--jade);color:var(--jade)}
+.meter{margin-top:22px;height:14px;border-radius:8px;background:linear-gradient(90deg,var(--ember),rgba(184,154,127,.3) 50%,var(--jade));position:relative;opacity:.5}
+.meter .needle{position:absolute;top:-7px;width:3px;height:28px;background:var(--ash);left:50%;transform:translateX(-50%);transition:.6s cubic-bezier(.3,.8,.3,1);box-shadow:0 0 10px rgba(243,233,217,.6)}
+.diagread{font-family:"Fraunces",serif;font-style:italic;color:var(--gold);font-size:18px;min-height:26px;margin-top:14px;text-align:center}
+
+/* SLIDE 10 — ad decoder */
+.adwrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;width:100%}
+.ad{position:relative;border-radius:20px;padding:36px 30px;min-height:clamp(240px,38vh,320px);cursor:pointer;
+  background:linear-gradient(150deg,#2a1c12,#120c08);border:1px solid rgba(255,194,75,.3);overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;text-align:center;transition:.4s}
+.ad .badge{position:absolute;top:16px;right:16px;font-family:"Space Mono",monospace;font-size:11px;color:var(--clay);border:1px solid rgba(243,233,217,.2);border-radius:20px;padding:4px 10px}
+.ad .big{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(34px,5vw,60px);line-height:.95;color:var(--gold)}
+.ad .small{font-size:15px;color:var(--clay);margin-top:14px;letter-spacing:.04em}
+.ad .decoded{position:absolute;inset:0;background:rgba(10,6,5,.94);padding:26px;display:flex;flex-direction:column;justify-content:center;gap:14px;
+  opacity:0;pointer-events:none;transition:.5s}
+.ad.show .decoded{opacity:1;pointer-events:auto}
+.ad .decoded .h{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.1em;color:var(--ember)}
+.ad .decoded .belief{font-family:"Fraunces",serif;font-style:italic;font-size:clamp(17px,2vw,22px);color:var(--ash);line-height:1.3;
+  opacity:0;transform:translateY(8px);transition:.5s}
+.ad.show .decoded .belief.on{opacity:1;transform:none}
+.adside p{font-size:clamp(16px,1.9vw,21px);line-height:1.5;color:var(--clay)}
+
+/* SLIDE 12 — mindful */
+.mindwrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;margin-top:16px}
+.mindcard{border-radius:16px;padding:22px 24px;border:1px solid rgba(243,233,217,.15);background:rgba(255,255,255,.02)}
+.mindcard h4{font-family:"Fraunces",serif;font-size:21px;font-weight:600;color:var(--jade);margin-bottom:6px}
+.mindcard p{font-size:15px;line-height:1.45;color:var(--clay)}
+
+/* SLIDE 13 — discussion */
+.prompts{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;margin-top:18px}
+.prompt{border-radius:16px;padding:20px 22px;border:1px solid rgba(243,233,217,.15);background:rgba(255,255,255,.02);display:flex;gap:14px;align-items:flex-start}
+.prompt .q{font-family:"Fraunces",serif;font-weight:900;color:var(--ember);font-size:28px;line-height:.9;flex:none}
+.prompt p{font-size:clamp(14px,1.6vw,18px);line-height:1.35;color:var(--ash)}
+
+.afterletgo{opacity:0;max-height:0;overflow:hidden;transition:opacity 1.4s ease 1s}
+.afterletgo.show{opacity:1;max-height:400px}
+.bigflame{transform:scale(1.4);margin:6px 0 26px;transition:transform 2s,filter 2s}
+body.settled .bigflame{transform:scale(.9);filter:drop-shadow(0 0 50px rgba(86,194,167,.45)) hue-rotate(110deg) saturate(.8)}
+
+@media (max-width:880px){
+  .sortwrap,.stepwrap,.adwrap{grid-template-columns:1fr;gap:26px}
+  .revgrid.four,.revgrid.five,.revgrid.three{grid-template-columns:1fr}
+  .revgrid.five .rev p,.rev p{opacity:1;max-height:200px}
+  .mindwrap,.prompts{grid-template-columns:1fr}.kbhint{display:none}
+  .qrow{grid-template-columns:1fr}.qrow .opts{justify-content:flex-start}
+}
+/* ===== BONUS PARABLES (v1) ===== */
+.divlabel{font-family:"Space Mono",monospace;letter-spacing:.24em;text-transform:uppercase;color:var(--clay);font-size:13px;margin-bottom:18px}
+/* loop */
+.loopwrap{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;width:100%}
+.loop{position:relative;width:min(40vh,400px);aspect-ratio:1;margin:0 auto}
+.node{position:absolute;width:100px;height:100px;left:50%;top:50%;margin:-50px 0 0 -50px;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  border:1px solid rgba(243,233,217,.18);background:rgba(255,255,255,.025);font-weight:600;font-size:13px;line-height:1.1;transition:.4s;color:var(--clay)}
+.node small{font-size:21px;margin-bottom:3px}
+.node.lit{border-color:var(--ember);color:var(--ash);background:rgba(255,122,26,.14);box-shadow:0 0 36px rgba(255,122,26,.4);transform:scale(1.08)}
+.loop-mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;width:140px}
+.loop-mid .ex{font-family:"Fraunces",serif;font-style:italic;font-size:18px;color:var(--gold);min-height:46px;display:flex;align-items:center;justify-content:center}
+.loop-count{font-family:"Space Mono",monospace;font-size:12px;color:var(--clay);margin-top:4px}
+/* arrows */
+.arrowstage{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;width:100%}
+.figure{position:relative;height:clamp(220px,38vh,340px);border-radius:20px;border:1px solid rgba(243,233,217,.14);background:rgba(255,255,255,.02);overflow:hidden}
+.target{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,#fff5d6 0 14%,var(--ember) 14% 30%,transparent 30% 40%,var(--ember) 40% 52%,transparent 52% 64%,var(--ember) 64% 76%)}
+.arrow{position:absolute;top:50%;height:5px;width:0;border-radius:3px;transform:translateY(-50%)}
+.arrow.a1{left:-2%;background:linear-gradient(90deg,transparent,var(--ash))}
+.arrow.a2{left:-2%;top:42%;background:linear-gradient(90deg,transparent,var(--ember))}
+.arrow.fired{width:50%;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.spiral{position:absolute;inset:0;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:8px;padding:24px;opacity:0;transition:opacity .5s}
+.spiral.show{opacity:1}
+.spiral span{font-family:"Fraunces",serif;font-style:italic;color:var(--ember-bright);font-size:15px;opacity:0;transform:translateY(8px);transition:.4s}
+.spiral.show span.on{opacity:.92;transform:none}
+.arrow-copy ul{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:16px}
+.arrow-copy li{display:flex;gap:14px;font-size:clamp(15px,1.7vw,19px);line-height:1.4;color:var(--clay)}
+.arrow-copy li b{color:var(--ash);font-weight:600}
+.num{font-family:"Fraunces",serif;font-weight:900;color:var(--ember);font-size:26px;line-height:1;flex:none;width:26px}
+.choicebtns{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+/* trap */
+.trapwrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;width:100%}
+.gourd{position:relative;width:min(36vh,300px);aspect-ratio:.82;margin:0 auto}
+.gourd .pot{position:absolute;inset:0;border-radius:46% 46% 50% 50%/40% 40% 60% 60%;
+  background:linear-gradient(160deg,#3a2a1d,#1c130c);border:2px solid rgba(255,194,75,.25);box-shadow:inset 0 -20px 50px rgba(0,0,0,.6)}
+.gourd .hole{position:absolute;left:50%;top:7%;transform:translateX(-50%);width:54px;height:30px;border-radius:50%;background:#0a0605;box-shadow:inset 0 4px 10px rgba(0,0,0,.8)}
+.gourd .treat{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,var(--gold),var(--ember));box-shadow:0 0 30px rgba(255,194,75,.5);transition:.7s}
+.gourd .hand{position:absolute;left:50%;top:7%;transform:translateX(-50%);font-size:46px;transition:.8s cubic-bezier(.3,.8,.3,1)}
+.gourd.open .hand{top:-30%}.gourd.open .treat{top:120%;opacity:0}
+.trap-copy .beat{font-size:clamp(16px,1.9vw,21px);line-height:1.5;color:var(--clay);opacity:.25;transition:.5s;margin-bottom:14px;padding-left:18px;border-left:2px solid transparent}
+.trap-copy .beat.on{opacity:1;color:var(--ash);border-left-color:var(--ember)}
+@media (max-width:880px){.loopwrap,.arrowstage,.trapwrap{grid-template-columns:1fr;gap:26px}}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition-duration:.001s !important}}
+</style>
+</head>
+<body>
+<canvas id="ambient"></canvas>
+<div class="glow"></div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide center" data-slide>
+    <div class="inner">
+      <div class="flame" data-anim style="margin:0 auto 24px"><div class="body"></div><div class="core"></div></div>
+      <div class="eyebrow c" data-anim>30-min workshop · Theravāda Buddhism</div>
+      <h1 data-anim>Friend or Fire?</h1>
+      <p class="lede" data-anim style="margin:20px auto 0;text-align:center;max-width:34ch">
+        Desire built every dream you have — and it's the exact thing the Buddha said keeps you suffering. So which is it? Let's <span class="em">investigate</span>.</p>
+      <p class="tiny" data-anim style="margin-top:30px">press → or swipe to begin</p>
+    </div>
+  </section>
+
+  <!-- 2 GOOD OR BAD — spectrum -->
+  <section class="slide" data-slide data-init="spec">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the open question</div>
+      <h2 data-anim style="margin-bottom:8px">Is desire good or bad?</h2>
+      <p class="sub" data-anim style="margin-top:6px;max-width:52ch">Don't answer yet. <span class="em">Click each one</span> and watch where it lands.</p>
+      <div class="spec" data-anim>
+        <div class="spectrack" id="track">
+          <span class="lbl l">burns you ↓</span><span class="lbl m">it depends</span><span class="lbl r">↑ frees you</span>
+        </div>
+        <div class="why" id="specWhy">— tap a chip below —</div>
+        <div class="chips" id="chips"></div>
+        <p class="sub specpunch" id="specPunch" style="margin-top:18px">Same word, opposite effects. Buddhism doesn't ask <span class="serif-i">do you want</span> — it asks <span class="emg">how</span> you want.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 TANHA vs CHANDA — sort game -->
+  <section class="slide" data-slide data-init="sort">
+    <div class="inner">
+      <div class="eyebrow" data-anim>two engines of wanting</div>
+      <h2 data-anim style="margin-bottom:22px">Craving or aspiration?</h2>
+      <div class="sortwrap">
+        <div class="sortcard" data-anim>
+          <div class="item" id="sortItem">wanting revenge</div>
+          <div class="sortbtns">
+            <button class="btn" id="sortTanha">🔥 taṇhā</button>
+            <button class="btn calm" id="sortChanda">🌱 chanda</button>
+          </div>
+          <div class="sortfeed" id="sortFeed">Which kind of wanting is this?</div>
+          <div class="score" id="sortScore">0 / 6</div>
+        </div>
+        <div class="defcol" data-anim>
+          <div class="d t"><h4>Taṇhā <span class="pp">/ TUN-ha · thirst /</span></h4><p>Craving, grasping, clinging. Grips you and never stays full — feed it, and it just wants more.</p></div>
+          <div class="d c"><h4>Chanda <span class="pp">/ CHUN-da · aspiration /</span></h4><p>Skillful drive: to learn, help, grow, be free. Moves you forward — and lets go when it's done. You <em>need</em> it to walk any path worth walking.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 THE CLAIM -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>the first teaching · SN 56.11</div>
+      <h2 data-anim>Craving is the cause<br>of suffering.</h2>
+      <p class="sub" data-anim style="color:var(--ash);max-width:42ch">2,500 years ago, in his very first talk, the Buddha named that restless, never-quite-enough ache — <span class="em">dukkha</span> — and pointed at its engine.</p>
+      <p class="sub" data-anim>Not pain itself. The <span class="emg">craving</span> for things to be other than they are: <span class="serif-i" style="color:var(--gold)">the second arrow you fire at yourself.</span></p>
+      <p class="sub" data-anim style="color:var(--ash)">So the next question is simple: <b>why does craving hurt?</b></p>
+    </div>
+  </section>
+
+  <!-- 5 WHY IT BURNS — 4 problems -->
+  <section class="slide" data-slide data-init="rev4">
+    <div class="inner">
+      <div class="eyebrow" data-anim>why craving burns · tap to reveal</div>
+      <h2 data-anim style="margin-bottom:6px">Four ways the grip hurts.</h2>
+      <div class="revgrid four" data-anim>
+        <div class="rev" data-rev><span class="rg">🪤</span><h4>Leaning on it for lasting happiness</h4><p>You hand your peace to a thing that can't hold it — so the calm always leaks back out.</p></div>
+        <div class="rev" data-rev><span class="rg">🤲</span><h4>Clinging to the pleasant</h4><p>You try to freeze a good moment. But moments move — and the squeeze is the ache.</p></div>
+        <div class="rev" data-rev><span class="rg">🙅</span><h4>Resisting the unpleasant</h4><p>Pushing away what's already here just doubles it. Fighting reality is exhausting.</p></div>
+        <div class="rev" data-rev><span class="rg">🪞</span><h4>Building "me" around it</h4><p>Car, grades, followers, the relationship — make them <em>you</em>, and losing them feels like dying.</p></div>
+      </div>
+      <p class="sub" data-anim style="margin-top:14px">That's why it's compared to <span class="em">fire</span>: restless, grabbing, unstable — feed it and it only grows. One want fulfilled, the next appears.</p>
+    </div>
+  </section>
+
+  <!-- 6 THE ROOT — three marks -->
+  <section class="slide" data-slide data-init="rev3">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the root · tap to reveal</div>
+      <h2 data-anim style="margin-bottom:6px">So why crave at all?</h2>
+      <p class="sub" data-anim style="margin-top:4px;max-width:50ch">Because we don't clearly see three things about <em>everything</em>:</p>
+      <div class="revgrid three" data-anim>
+        <div class="rev" data-rev><span class="rg">🌊</span><h4>Anicca</h4><span class="pp">impermanence</span><p>Nothing lasts. So clinging is gripping water — guaranteed to slip.</p></div>
+        <div class="rev" data-rev><span class="rg">🕳️</span><h4>Dukkha</h4><span class="pp">unsatisfactoriness</span><p>No thing can fully, finally satisfy. The "enough" you're chasing isn't out there.</p></div>
+        <div class="rev" data-rev><span class="rg">🌀</span><h4>Anatta</h4><span class="pp">no fixed self</span><p>There's no solid, separate "me" that owning more will complete.</p></div>
+      </div>
+      <p class="sub" data-anim style="margin-top:14px">Miss these, and craving runs on autopilot. <span class="emg">See</span> them, and the grip starts to loosen on its own.</p>
+    </div>
+  </section>
+
+  <!-- 7 MIDDLE PATH — stepper -->
+  <section class="slide" data-slide data-init="step">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the middle path · not suppressing, not indulging</div>
+      <h2 data-anim style="margin-bottom:22px">A move that isn't<br>fight <span style="color:var(--clay)">or</span> obey.</h2>
+      <div class="stepwrap">
+        <div class="steplamp" data-anim id="lamp">
+          <div class="ring"></div>
+          <div class="flame" style="transform:scale(.9)"><div class="body"></div><div class="core"></div></div>
+          <div class="eye" id="lampEye">a desire arises…</div>
+        </div>
+        <div class="stepbody" data-anim>
+          <div class="stepbar" id="stepbar"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="stepnum" id="stepNum">step 1 of 5</div>
+          <div class="steptitle" id="stepTitle">Notice it</div>
+          <div class="stepdesc" id="stepDesc">When wanting shows up, pause. Name it plainly: <span class="serif-i" style="color:var(--gold)">"wanting is here."</span> You just stepped out of autopilot.</div>
+          <div style="display:flex;gap:12px;margin-top:8px">
+            <button class="btn ghost" id="stepPrev" disabled>‹ back</button>
+            <button class="btn" id="stepNext">next step ›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 DIAGNOSTIC -->
+  <section class="slide" data-slide data-init="diag">
+    <div class="inner">
+      <div class="eyebrow" data-anim>run the check · pick a real want in your head</div>
+      <h2 data-anim style="margin-bottom:6px">Investigate one desire.</h2>
+      <p class="sub" data-anim style="margin-top:4px;max-width:54ch">Answer honestly for something you want right now. <span class="serif-i">Desire is a conditioned event — you can examine it.</span></p>
+      <div class="diagwrap" data-anim>
+        <div id="qrows"></div>
+        <div class="meter"><div class="needle" id="needle"></div></div>
+        <div class="diagread" id="diagRead">answer above — the needle reads the grip</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 CONSUMERISM intro -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>now the twist</div>
+      <h2 data-anim>There's an economy<br>built to keep you <span class="em">thirsty</span>.</h2>
+      <p class="sub" data-anim style="color:var(--ash);max-width:44ch">Consumerism isn't evil — it's an engine. And it runs on the exact thing we just studied: <span class="emg">craving, dissatisfaction, and identity</span>.</p>
+      <p class="sub" data-anim>If you were never satisfied, you'd keep buying. So a whole system gets very good at making sure you're <span class="serif-i">never quite satisfied.</span></p>
+    </div>
+  </section>
+
+  <!-- 10 AD DECODER -->
+  <section class="slide" data-slide data-init="ad">
+    <div class="inner">
+      <div class="eyebrow" data-anim>decode the ad</div>
+      <h2 data-anim style="margin-bottom:22px">What is it really selling?</h2>
+      <div class="adwrap">
+        <div class="ad" data-anim id="ad">
+          <span class="badge">sponsored</span>
+          <div class="big">NEW.<br>YOU NEED THIS.</div>
+          <div class="small">limited drop · everyone has it · don't miss out</div>
+          <div class="decoded" id="adDecoded">
+            <div class="h">what it installs in your mind ↓</div>
+            <div class="belief">"I'll finally be <em>complete</em> once I get this."</div>
+            <div class="belief">"My worth = what I own, display &amp; consume."</div>
+            <div class="belief">"This time the good feeling will <em>last</em>."</div>
+          </div>
+        </div>
+        <div class="adside" data-anim>
+          <p>Every ad has to first make you feel a <span class="em">lack</span> — then sell the patch.</p>
+          <p style="margin-top:16px">It manufactures the thirst, then charges you for water.</p>
+          <button class="btn" id="adBtn" style="margin-top:24px">decode the message →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 HOW IT KEEPS BURNING — 5 -->
+  <section class="slide" data-slide data-init="rev5">
+    <div class="inner">
+      <div class="eyebrow" data-anim>how it keeps the fire lit · tap to reveal</div>
+      <h2 data-anim style="margin-bottom:8px">Five ways it feeds the loop.</h2>
+      <div class="revgrid five" data-anim>
+        <div class="rev" data-rev><span class="rg">📉</span><h4>Manufactures lack</h4><p>Ads create a sense of "not enough" you didn't have before.</p></div>
+        <div class="rev" data-rev><span class="rg">🪞</span><h4>Feeds the "self"</h4><p>Strengthens "I am what I own" — more clinging.</p></div>
+        <div class="rev" data-rev><span class="rg">👀</span><h4>Aims you outward</h4><p>Keeps the mind hunting out there, never settling here.</p></div>
+        <div class="rev" data-rev><span class="rg">⏳</span><h4>Denies change</h4><p>Sells "permanent happy" while everything keeps moving.</p></div>
+        <div class="rev" data-rev><span class="rg">🙏</span><h4>Dulls gratitude</h4><p>Drowns out contentment with the next thing you "need".</p></div>
+      </div>
+      <p class="sub" data-anim style="margin-top:14px">Recognise the pattern? It's <span class="em">taṇhā</span> — at industrial scale.</p>
+    </div>
+  </section>
+
+  <!-- 12 MIDDLE WAY WITH STUFF -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>so… is owning things wrong?</div>
+      <h2 data-anim style="margin-bottom:6px">No. The stuff isn't<br>the problem — the <span class="em">grip</span> is.</h2>
+      <p class="sub" data-anim style="margin-top:6px;max-width:52ch">The middle way: enjoy without clinging. A few moves that un-feed the fire:</p>
+      <div class="mindwrap">
+        <div class="mindcard" data-anim><h4>Pause before you buy</h4><p>One breath. Ask: is this <span class="jade">chanda</span> (a real, useful want) or <span class="em">taṇhā</span> (a manufactured itch)?</p></div>
+        <div class="mindcard" data-anim><h4>Use it, don't become it</h4><p>Own the phone; don't let the phone own your sense of who you are.</p></div>
+        <div class="mindcard" data-anim><h4>Notice the fade</h4><p>Remember how fast the last "must-have" got boring. That memory is freedom.</p></div>
+        <div class="mindcard" data-anim><h4>Practice gratitude</h4><p>Contentment is the one thing the ad can't sell you — and it cools the fire.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 DISCUSSION -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>talk it out · pairs, then the room</div>
+      <h2 data-anim style="margin-bottom:4px">Your turn.</h2>
+      <div class="prompts">
+        <div class="prompt" data-anim><span class="q">1</span><p>Name one want that's <span class="jade">chanda</span> and one that's <span class="em">taṇhā</span>. How can you actually tell them apart?</p></div>
+        <div class="prompt" data-anim><span class="q">2</span><p>Which of the four "ways the grip hurts" do you feel most — leaning, clinging, resisting, or building "me" around it?</p></div>
+        <div class="prompt" data-anim><span class="q">3</span><p>Think of a recent purchase. What <span class="em">lack</span> did the ad make you feel first?</p></div>
+        <div class="prompt" data-anim><span class="q">4</span><p>What would <span class="emg">mindful consuming</span> look like for you this week — one small, real change?</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 CLOSE -->
+  <section class="slide center" data-slide data-init="letgo">
+    <div class="inner">
+      <div class="flame bigflame" data-anim id="bigflame"><div class="body"></div><div class="core"></div></div>
+      <h2 data-anim style="max-width:20ch">You're allowed<br>to want things.</h2>
+      <p class="sub" data-anim style="text-align:center;margin:18px auto 0;max-width:32ch;font-size:clamp(18px,2.3vw,26px);color:var(--ash)">
+        Just don't let the wanting <span class="serif-i em">want you.</span></p>
+      <button class="btn calm" data-anim id="letgoBtn" style="margin-top:26px">let it settle</button>
+      <div class="afterletgo" id="afterletgo">
+        <p class="pron" style="margin-top:28px">investigation → wisdom · the fire gets <span class="jade">un-fed</span>, not fought</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- B0 BONUS DIVIDER -->
+  <section class="slide center" data-slide>
+    <div class="inner">
+      <div class="flame" data-anim style="margin:0 auto 22px;transform:scale(.7)"><div class="body"></div><div class="core"></div></div>
+      <div class="divlabel" data-anim>optional · use during discussion or to extend</div>
+      <h2 data-anim>Three parables<br>for the fire.</h2>
+      <p class="sub" data-anim style="text-align:center;margin:16px auto 0;max-width:34ch">Pull these up if you have time, or to make a point land. Each is interactive.</p>
+    </div>
+  </section>
+
+  <!-- B1 LOOP -->
+  <section class="slide" data-slide data-init="loop">
+    <div class="inner">
+      <div class="eyebrow" data-anim>bonus · the wanting loop</div>
+      <h2 data-anim style="margin-bottom:26px">The treadmill.</h2>
+      <div class="loopwrap">
+        <div class="loop" data-anim id="loop">
+          <div class="loop-mid"><div class="ex" id="loopEx">a new phone</div><div class="loop-count" id="loopCount">laps: 0</div></div>
+        </div>
+        <div data-anim>
+          <p class="sub" style="color:var(--ash);margin-top:0">Want it → chase it → get it → a spark of joy → it fades → want the <span class="em">next</span> thing.</p>
+          <p class="sub" id="loopPunch" style="opacity:.35;transition:.6s">Psychologists call it the <span class="emg">hedonic treadmill</span>. You run; the finish line just moves.</p>
+          <button class="btn" id="loopBtn" style="margin-top:24px">give it what it wants →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B2 ARROWS -->
+  <section class="slide" data-slide data-init="arrows">
+    <div class="inner">
+      <div class="eyebrow" data-anim>bonus · the two arrows</div>
+      <h2 data-anim style="margin-bottom:22px">Pain happens.<br>Suffering is <span class="em">optional</span>.</h2>
+      <div class="arrowstage">
+        <div class="figure" data-anim>
+          <div class="arrow a1" id="ar1"></div><div class="arrow a2" id="ar2"></div><div class="target"></div>
+          <div class="spiral" id="spiral">
+            <span>"I'm so stupid"</span><span>"why does this always happen"</span><span>"everyone saw"</span><span>"I'll never"</span><span>"of course"</span><span>"typical me"</span>
+          </div>
+        </div>
+        <div class="arrow-copy" data-anim>
+          <ul>
+            <li><span class="num">1</span><span><b>First arrow:</b> something hurts. You fail, get left on read. It lands. Unavoidable.</span></li>
+            <li><span class="num">2</span><span><b>Second arrow:</b> the story you fire <em>at yourself</em> — replaying, blaming. That's <span class="em">taṇhā</span> craving reality to be different.</span></li>
+          </ul>
+          <div class="choicebtns">
+            <button class="btn" id="fire2">fire the second arrow</button>
+            <button class="btn ghost" id="setbow">set the bow down</button>
+          </div>
+          <p class="tiny" id="arrowMsg" style="margin-top:18px;min-height:18px"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B3 MONKEY TRAP -->
+  <section class="slide" data-slide data-init="trap">
+    <div class="inner">
+      <div class="eyebrow" data-anim>bonus · the trap with no lock</div>
+      <h2 data-anim style="margin-bottom:22px">The monkey trap.</h2>
+      <div class="trapwrap">
+        <div data-anim>
+          <div class="gourd" id="gourd"><div class="pot"></div><div class="treat"></div><div class="hole"></div><div class="hand">✊</div></div>
+        </div>
+        <div class="trap-copy" data-anim>
+          <p class="beat" data-beat>A hollow gourd is tied down. Something sweet sits inside. The hole fits only an open hand.</p>
+          <p class="beat" data-beat>The monkey reaches in and <b>grabs</b> the treat. Now its fist is too big to pull back out.</p>
+          <p class="beat" data-beat>It pulls. It panics. It's stuck. But the trap has no lock, no net, no door.</p>
+          <p class="beat" data-beat><b>It's held by its own grip.</b> Freedom is one decision away: let go.</p>
+          <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap">
+            <button class="btn ghost" id="trapNext">next →</button>
+            <button class="btn calm" id="trapOpen" style="display:none">open the hand</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="dots" id="dots"></div>
+<div class="nav"><button id="prev">‹</button><span class="counter" id="counter">01 / 14</span><button id="next">›</button></div>
+<div class="kbhint">← → arrows · space · swipe</div>
+
+<script>
+const slides=[...document.querySelectorAll('[data-slide]')];
+const dotsWrap=document.getElementById('dots');const counter=document.getElementById('counter');
+const prevB=document.getElementById('prev'),nextB=document.getElementById('next');
+let idx=0;const inited=new Set();
+const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+slides.forEach((_,i)=>{const d=document.createElement('i');d.onclick=()=>go(i);dotsWrap.appendChild(d)});
+const dots=[...dotsWrap.children];
+function go(n){
+  n=Math.max(0,Math.min(slides.length-1,n));
+  slides[idx].classList.remove('active');idx=n;
+  const s=slides[idx];s.classList.add('active');
+  const els=[...s.querySelectorAll('[data-anim]')];
+  els.forEach(e=>e.classList.remove('in'));
+  els.forEach((e,i)=>setTimeout(()=>e.classList.add('in'),reduce?0:85*i));
+  dots.forEach((d,i)=>d.classList.toggle('on',i===idx));
+  counter.textContent=String(idx+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  prevB.disabled=idx===0;nextB.disabled=idx===slides.length-1;
+  const key=s.dataset.init;if(key&&!inited.has(key)){inited.add(key);(initers[key]||(()=>{}))(s);}
+}
+nextB.onclick=()=>go(idx+1);prevB.onclick=()=>go(idx-1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(idx+1);}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(idx-1);}
+  if(e.key==='Home')go(0);if(e.key==='End')go(slides.length-1);
+});
+let tx=0;addEventListener('touchstart',e=>tx=e.changedTouches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>60)go(idx+(dx<0?1:-1));},{passive:true});
+
+const initers={};
+
+// 2 spectrum
+initers.spec=(s)=>{
+  const data=[
+    {t:"wanting revenge",pos:6,why:"rooted in hatred — it scorches the one holding it"},
+    {t:"a new phone to feel whole",pos:20,why:"leaning on a thing for lasting happiness it can't give"},
+    {t:"scrolling to disappear",pos:18,why:"craving to escape — numbing, not freeing"},
+    {t:"never feeling anxious again",pos:34,why:"resisting what's already here doubles the struggle"},
+    {t:"getting fit",pos:58,why:"depends — healthy drive, or craving an image? watch the motive"},
+    {t:"learning guitar",pos:80,why:"chanda — energy that moves you and lets go"},
+    {t:"helping a friend",pos:88,why:"chanda — wanting that opens you up, not grips"},
+    {t:"to be free of greed & hatred",pos:96,why:"the wholesome aspiration that walks the whole path"},
+  ];
+  const chips=s.querySelector('#chips'),track=s.querySelector('#track'),why=s.querySelector('#specWhy'),punch=s.querySelector('#specPunch');
+  let placed=0;
+  data.forEach(d=>{
+    const c=document.createElement('div');c.className='chip';c.textContent=d.t;
+    c.onclick=()=>{
+      c.classList.add('used');
+      const m=document.createElement('div');m.className='placed';m.textContent=d.t;
+      m.style.left=d.pos+'%';m.style.top=(8+(placed%3)*24)+'px';
+      track.appendChild(m);requestAnimationFrame(()=>m.classList.add('on'));
+      why.textContent='“'+d.t+'” — '+d.why;placed++;
+      if(placed>=data.length)punch.style.opacity='1';
+    };
+    chips.appendChild(c);
+  });
+};
+
+// 3 sort
+initers.sort=(s)=>{
+  const items=[
+    {t:"wanting revenge",a:"t",w:"taṇhā — hot with aversion. burns the holder."},
+    {t:"wanting to understand the dhamma",a:"c",w:"chanda — the aspiration that walks the path."},
+    {t:"needing 1,000 likes to feel okay",a:"t",w:"taṇhā — self-worth outsourced to a number."},
+    {t:"wanting to help your friend through a hard week",a:"c",w:"chanda — wanting that opens, not grips."},
+    {t:"wanting to numb out and disappear",a:"t",w:"taṇhā — craving for absence (vibhava)."},
+    {t:"wanting to get stronger and healthier",a:"c",w:"chanda — if it's growth, not self-image clinging."},
+  ];
+  let i=0,score=0;
+  const item=s.querySelector('#sortItem'),feed=s.querySelector('#sortFeed'),sc=s.querySelector('#sortScore');
+  const bt=s.querySelector('#sortTanha'),bc=s.querySelector('#sortChanda');
+  function load(){item.textContent=items[i].t;feed.textContent="Which kind of wanting is this?";feed.style.color="var(--clay)";}
+  function answer(pick){
+    const cur=items[i];const right=pick===cur.a;
+    if(right)score++;
+    feed.innerHTML=(right?'<span style="color:var(--jade)">✓ </span>':'<span style="color:var(--ember-bright)">↻ </span>')+cur.w;
+    sc.textContent=score+' / '+items.length;
+    i++;
+    if(i<items.length){setTimeout(load,1100);}
+    else{setTimeout(()=>{item.textContent="nice.";feed.innerHTML='You scored '+score+'/'+items.length+'. The tell: <span class="serif-i" style="color:var(--gold)">does it open you, or grip you?</span>';},1100);}
+  }
+  bt.onclick=()=>answer('t');bc.onclick=()=>answer('c');load();
+};
+
+// reveal cards (generic)
+function revInit(s){s.querySelectorAll('[data-rev]').forEach(r=>r.onclick=()=>r.classList.toggle('open'));}
+initers.rev4=revInit;initers.rev3=revInit;initers.rev5=revInit;
+
+// 7 stepper
+initers.step=(s)=>{
+  const steps=[
+    {t:"Notice it",d:'When wanting shows up, pause. Name it plainly: <span class="serif-i" style="color:var(--gold)">"wanting is here."</span> You just stepped out of autopilot.',cls:""},
+    {t:"Feel it in the body",d:'Where does it live — chest, gut, jaw? What does it actually want, and what story is it telling you?',cls:""},
+    {t:"Don't auto-obey",d:'You don\'t have to act on it this second. Watch your attitude toward it. Stay long enough to see it <em>change</em>.',cls:""},
+    {t:"Let the unwholesome fade",d:'Un-fed, a grasping desire loses heat on its own. You didn\'t fight it — you just stopped pouring fuel.',cls:"fade"},
+    {t:"Cultivate the wholesome",d:'In its place, water the good wanting: to learn, to help, to be kind, to be free. <span class="jade">That\'s</span> the aspiration you keep.',cls:"cultivate"},
+  ];
+  let i=0;
+  const bar=[...s.querySelectorAll('#stepbar i')],num=s.querySelector('#stepNum'),title=s.querySelector('#stepTitle'),
+    desc=s.querySelector('#stepDesc'),lamp=s.querySelector('#lamp'),eye=s.querySelector('#lampEye'),
+    pv=s.querySelector('#stepPrev'),nx=s.querySelector('#stepNext');
+  const eyes=["a desire arises…","…observed, not obeyed","…watching it shift","…losing its heat","…warmth, not wildfire"];
+  function render(){
+    const st=steps[i];num.textContent='step '+(i+1)+' of 5';title.textContent=st.t;desc.innerHTML=st.d;
+    bar.forEach((b,k)=>b.classList.toggle('on',k<=i));
+    lamp.classList.remove('fade','cultivate');if(st.cls)lamp.classList.add(st.cls);
+    eye.textContent=eyes[i];pv.disabled=i===0;nx.textContent=i===steps.length-1?'↺ start over':'next step ›';
+  }
+  nx.onclick=()=>{i=(i+1)%steps.length;render();};
+  pv.onclick=()=>{if(i>0){i--;render();}};
+  render();
+};
+
+// 8 diagnostic
+initers.diag=(s)=>{
+  const qs=[
+    {q:"Does it tighten the mind, or steady it?",grip:"tightens",ease:"steadies"},
+    {q:"Any greed, hatred, or delusion in it?",grip:"yes, some",ease:"pretty clean"},
+    {q:"If it's blocked — fear/anger/despair?",grip:"i'd spiral",ease:"i'd be okay"},
+    {q:"Fulfilling it brings calm, or more agitation?",grip:"more wanting",ease:"actual calm"},
+    {q:"Is there clinging of \u201cmine / me\u201d in it?",grip:"strongly",ease:"not really"},
+  ];
+  const wrap=s.querySelector('#qrows'),needle=s.querySelector('#needle'),read=s.querySelector('#diagRead');
+  const ans=new Array(qs.length).fill(null);
+  qs.forEach((item,k)=>{
+    const row=document.createElement('div');row.className='qrow';
+    row.innerHTML=`<div class="qt">${item.q}</div>`;
+    const opts=document.createElement('div');opts.className='opts';
+    const g=document.createElement('button');g.className='pill';g.textContent=item.grip;
+    const e=document.createElement('button');e.className='pill';e.textContent=item.ease;
+    g.onclick=()=>{ans[k]=1;g.classList.add('pick-grip');e.classList.remove('pick-ease');update();};
+    e.onclick=()=>{ans[k]=0;e.classList.add('pick-ease');g.classList.remove('pick-grip');update();};
+    opts.append(g,e);row.appendChild(opts);wrap.appendChild(row);
+  });
+  function update(){
+    const done=ans.filter(a=>a!==null);
+    if(!done.length)return;
+    const grip=ans.reduce((a,b)=>a+(b||0),0)/qs.length; // 0..1, 1=all grip
+    needle.style.left=(6+(1-grip)*88)+'%';
+    if(done.length<qs.length){read.textContent='keep going… ('+done.length+'/'+qs.length+')';return;}
+    read.innerHTML = grip>=0.6 ? 'leans <span style="color:var(--ember-bright)">taṇhā</span> — worth investigating before you obey it'
+      : grip<=0.3 ? 'leans <span style="color:var(--jade)">chanda</span> — healthy aspiration, let it move you'
+      : 'mixed — some grip, some health. notice the difference.';
+  }
+};
+
+// 10 ad
+initers.ad=(s)=>{
+  const ad=s.querySelector('#ad'),btn=s.querySelector('#adBtn');
+  function reveal(){
+    ad.classList.add('show');
+    [...ad.querySelectorAll('.belief')].forEach((b,i)=>setTimeout(()=>b.classList.add('on'),250*i+150));
+    btn.textContent='see it now?';btn.disabled=true;
+  }
+  ad.onclick=reveal;btn.onclick=reveal;
+};
+
+// 14 let go
+initers.letgo=(s)=>{
+  s.querySelector('#letgoBtn').onclick=()=>{
+    document.body.classList.add('settled');
+    s.querySelector('#afterletgo').classList.add('show');
+    const b=s.querySelector('#letgoBtn');b.textContent='…';b.disabled=true;
+  };
+};
+
+// ===== bonus parable initers =====
+initers.loop=(s)=>{
+  const loop=s.querySelector('#loop');
+  const labels=[['🪞','want'],['🏃','chase'],['🎁','get it'],['✨','spark'],['🫠','fades']];
+  const R=loop.clientWidth/2-50;
+  const nodes=labels.map(([g,t],i)=>{
+    const a=-Math.PI/2 + i*(2*Math.PI/labels.length);
+    const el=document.createElement('div');el.className='node';el.innerHTML=`<small>${g}</small>${t}`;
+    el.style.left=`calc(50% + ${Math.cos(a)*R}px)`;el.style.top=`calc(50% + ${Math.sin(a)*R}px)`;
+    el.style.marginLeft='-50px';el.style.marginTop='-50px';loop.appendChild(el);return el;
+  });
+  const exs=['a new phone','their attention','100k followers','the perfect fit','an A on the test','being chosen','the new drop','one more like'];
+  const exEl=s.querySelector('#loopEx'),cEl=s.querySelector('#loopCount'),btn=s.querySelector('#loopBtn'),punch=s.querySelector('#loopPunch');
+  let laps=0,busy=false;
+  function lap(){if(busy)return;busy=true;let i=0;const step=()=>{
+    nodes.forEach(n=>n.classList.remove('lit'));
+    if(i<nodes.length){nodes[i].classList.add('lit');i++;setTimeout(step,reduce?60:300);}
+    else{nodes.forEach(n=>n.classList.remove('lit'));laps++;cEl.textContent='laps: '+laps;exEl.textContent=exs[laps%exs.length];busy=false;
+      if(laps>=2){punch.style.opacity='1';btn.textContent='…again? →';}}
+  };step();}
+  btn.onclick=lap;
+};
+initers.arrows=(s)=>{
+  const a1=s.querySelector('#ar1'),a2=s.querySelector('#ar2'),sp=s.querySelector('#spiral'),msg=s.querySelector('#arrowMsg');
+  setTimeout(()=>a1.classList.add('fired'),700);
+  s.querySelector('#fire2').onclick=()=>{a2.classList.add('fired');sp.classList.add('show');
+    [...sp.children].forEach((x,i)=>setTimeout(()=>x.classList.add('on'),150*i));
+    msg.innerHTML='⟶ the pain doubles. <span style="color:var(--ember-bright)">that\'s the part you added.</span>';};
+  s.querySelector('#setbow').onclick=()=>{a2.classList.remove('fired');sp.classList.remove('show');
+    [...sp.children].forEach(x=>x.classList.remove('on'));
+    msg.innerHTML='⟶ arrow one still hurts. <span style="color:var(--jade)">but you stop firing the second.</span>';};
+};
+initers.trap=(s)=>{
+  const beats=[...s.querySelectorAll('[data-beat]')];
+  const nextBtn=s.querySelector('#trapNext'),openBtn=s.querySelector('#trapOpen'),g=s.querySelector('#gourd');
+  let b=0;beats[0].classList.add('on');
+  nextBtn.onclick=()=>{b++;if(b<beats.length)beats[b].classList.add('on');
+    if(b>=beats.length-1){nextBtn.style.display='none';openBtn.style.display='inline-block';}};
+  openBtn.onclick=()=>{g.classList.add('open');g.querySelector('.hand').textContent='🖐️';openBtn.textContent='free.';openBtn.disabled=true;};
+};
+
+// ambient embers
+const cv=document.getElementById('ambient'),ctx=cv.getContext('2d');let W,H,parts=[];
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}resize();addEventListener('resize',resize);
+function spawn(){return{x:Math.random()*W,y:H+10,r:Math.random()*2+1,s:Math.random()*0.7+0.3,a:Math.random()*0.5+0.2,drift:(Math.random()-0.5)*0.4};}
+if(!reduce){
+  for(let i=0;i<46;i++){const p=spawn();p.y=Math.random()*H;parts.push(p);}
+  (function tick(){
+    ctx.clearRect(0,0,W,H);const settled=document.body.classList.contains('settled');
+    parts.forEach(p=>{p.y-=p.s;p.x+=p.drift;p.a-=0.0016;if(p.y<-10||p.a<=0)Object.assign(p,spawn());
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);
+      ctx.fillStyle=settled?`rgba(86,194,167,${p.a*0.7})`:`rgba(255,${140+Math.random()*60|0},60,${p.a})`;ctx.fill();});
+    requestAnimationFrame(tick);
+  })();
+}
+go(0);
+</script>
+</body>
+</html>
