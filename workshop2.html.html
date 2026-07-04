@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Wanting Machine — consumerism, materialism & desire (workshop 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15100c;--ink-deep:#0c0807;--ember:#ff7a1a;--ember-bright:#ff8f3d;
+  --gold:#ffc24b;--ash:#f3e9d9;--clay:#b89a7f;--jade:#56c2a7;--jade-deep:#2f6f63;
+  --rage:#e04545;--maxw:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--ink-deep);color:var(--ash);font-family:"Hanken Grotesk",system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+#ambient{position:fixed;inset:0;z-index:0;pointer-events:none}
+.glow{position:fixed;left:50%;bottom:-22vh;transform:translateX(-50%);width:90vw;height:70vh;z-index:0;pointer-events:none;
+  background:radial-gradient(50% 60% at 50% 100%, rgba(255,122,26,.32), rgba(255,122,26,.10) 38%, transparent 66%);transition:1.6s}
+body.settled .glow{background:radial-gradient(50% 60% at 50% 100%, rgba(86,194,167,.20), rgba(255,194,75,.08) 42%, transparent 68%)}
+.deck{position:relative;z-index:2;height:100%}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  padding:clamp(26px,5.2vw,80px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s}
+.slide.active{opacity:1;visibility:visible;pointer-events:auto}
+.inner{width:100%;max-width:var(--maxw);margin:0 auto}
+.eyebrow{font-family:"Space Mono",monospace;font-size:clamp(11px,1.1vw,14px);letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.eyebrow::before{content:"";width:30px;height:1px;background:var(--ember)}
+.eyebrow.c{justify-content:center}
+h1{font-family:"Fraunces",serif;font-weight:900;line-height:.95;font-size:clamp(50px,10.5vw,140px);letter-spacing:-.02em}
+h2{font-family:"Fraunces",serif;font-weight:600;line-height:1.02;font-size:clamp(30px,5.4vw,68px);letter-spacing:-.015em}
+.lede{font-size:clamp(18px,2.2vw,28px);line-height:1.45;color:var(--ash);max-width:32ch;margin-top:8px}
+.sub{font-size:clamp(16px,1.9vw,23px);line-height:1.5;color:var(--clay);max-width:44ch;margin-top:20px}
+.em{color:var(--ember-bright)}.emg{color:var(--gold)}.jade{color:var(--jade)}.red{color:var(--rage)}
+.serif-i{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
+.pron{font-family:"Space Mono",monospace;color:var(--gold);font-size:clamp(13px,1.5vw,17px);letter-spacing:.06em;margin-top:12px}
+.tiny{font-family:"Space Mono",monospace;font-size:13px;letter-spacing:.04em;color:var(--clay)}
+[data-anim]{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s cubic-bezier(.2,.7,.2,1)}
+.slide.active [data-anim].in{opacity:1;transform:none}
+.center{align-items:center;text-align:center}.center .inner{display:flex;flex-direction:column;align-items:center}
+.nav{position:fixed;z-index:30;right:clamp(20px,3vw,40px);bottom:clamp(20px,3vw,36px);display:flex;gap:10px;align-items:center}
+.nav button{width:46px;height:46px;border-radius:50%;border:1px solid rgba(243,233,217,.22);background:rgba(255,255,255,.03);
+  color:var(--ash);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(4px)}
+.nav button:hover{border-color:var(--ember);color:var(--gold);transform:translateY(-2px)}
+.nav button:disabled{opacity:.28;cursor:default;transform:none}
+.counter{font-family:"Space Mono",monospace;font-size:13px;color:var(--clay);min-width:48px;text-align:center}
+.dots{position:fixed;z-index:30;left:50%;transform:translateX(-50%);bottom:22px;display:flex;gap:6px}
+.dots i{width:7px;height:7px;border-radius:50%;background:rgba(243,233,217,.22);cursor:pointer;transition:.25s}
+.dots i.on{background:var(--ember);width:22px;border-radius:4px}
+.kbhint{position:fixed;z-index:30;left:clamp(20px,3vw,40px);bottom:clamp(22px,3vw,34px);font-family:"Space Mono",monospace;font-size:12px;color:rgba(184,154,127,.7)}
+.flame{position:relative;width:120px;height:160px;filter:drop-shadow(0 0 40px rgba(255,122,26,.55))}
+.flame .body{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:78px;height:120px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+  background:radial-gradient(40% 60% at 50% 70%, var(--gold), var(--ember) 55%, #c43c00 100%);transform-origin:bottom center;animation:flick 2.4s ease-in-out infinite}
+.flame .core{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:34px;height:64px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+  background:radial-gradient(50% 60% at 50% 70%, #fff5d6, var(--gold) 70%);animation:flick 1.7s ease-in-out infinite reverse;opacity:.9}
+@keyframes flick{0%,100%{transform:translateX(-50%) rotate(-2deg) scaleY(1)}25%{transform:translateX(-52%) rotate(2deg) scaleY(1.06)}
+  50%{transform:translateX(-49%) rotate(-1deg) scaleY(.97)}75%{transform:translateX(-51%) rotate(1.5deg) scaleY(1.04)}}
+.btn{font-family:"Hanken Grotesk";font-weight:600;font-size:clamp(15px,1.5vw,18px);color:var(--ink-deep);
+  background:linear-gradient(180deg,var(--gold),var(--ember));border:none;border-radius:40px;padding:13px 24px;cursor:pointer;
+  box-shadow:0 8px 30px rgba(255,122,26,.30);transition:.18s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(255,122,26,.42)}
+.btn:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--ash);border:1px solid rgba(243,233,217,.3);box-shadow:none}
+.btn.ghost:hover{border-color:var(--jade);color:var(--jade)}
+.btn.calm{background:linear-gradient(180deg,#7fe0c8,var(--jade));box-shadow:0 8px 30px rgba(86,194,167,.32)}
+
+/* S2 recap quiz */
+.quiz{width:100%;max-width:760px;margin-top:8px}
+.qq{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(22px,3vw,34px);line-height:1.1;min-height:76px}
+.qopts{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.qopt{font-size:clamp(15px,1.7vw,19px);padding:13px 20px;border-radius:30px;border:1px solid rgba(243,233,217,.28);
+  background:rgba(255,255,255,.03);cursor:pointer;transition:.2s;color:var(--ash)}
+.qopt:hover{border-color:var(--gold);transform:translateY(-2px)}
+.qopt.right{background:rgba(86,194,167,.2);border-color:var(--jade);color:var(--jade)}
+.qopt.wrong{background:rgba(224,69,69,.15);border-color:var(--rage);color:var(--rage)}
+.qfeed{margin-top:18px;font-size:16px;color:var(--clay);min-height:44px;line-height:1.45}
+.qprog{font-family:"Space Mono",monospace;font-size:12px;color:var(--clay);margin-top:8px}
+
+/* S3 balance scale */
+.scalewrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;width:100%}
+.scale{position:relative;height:clamp(240px,38vh,330px);margin:0 auto;width:100%;max-width:460px}
+.pivot{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);width:0;height:0;
+  border-left:26px solid transparent;border-right:26px solid transparent;border-bottom:120px solid rgba(184,154,127,.35)}
+.beam{position:absolute;left:50%;bottom:140px;width:86%;height:8px;border-radius:5px;background:linear-gradient(90deg,var(--jade),var(--clay),var(--ember));
+  transform:translateX(-50%) rotate(0deg);transform-origin:center;transition:transform .7s cubic-bezier(.3,.8,.3,1)}
+.pan{position:absolute;top:10px;width:120px;text-align:center}
+.pan.l{left:-8px}.pan.r{right:-8px}
+.pan .dish{height:58px;border-radius:0 0 60px 60px;border:1.5px solid rgba(243,233,217,.3);border-top:none;background:rgba(255,255,255,.03)}
+.pan .cnt{font-family:"Fraunces",serif;font-weight:900;font-size:26px;line-height:58px}
+.pan.l .cnt{color:var(--jade)}.pan.r .cnt{color:var(--ember-bright)}
+.pan .plabel{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.08em;margin-top:8px;color:var(--clay)}
+.scalechips{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.schip{font-size:clamp(13px,1.5vw,16px);padding:9px 15px;border-radius:22px;border:1px solid rgba(243,233,217,.28);
+  background:rgba(255,255,255,.03);cursor:pointer;transition:.2s}
+.schip:hover{border-color:var(--gold);transform:translateY(-2px)}
+.schip.used{opacity:.35;pointer-events:none}
+.schip.used.b{border-color:var(--jade);color:var(--jade)}
+.schip.used.d{border-color:var(--ember);color:var(--ember-bright)}
+.sverdict{font-family:"Space Mono",monospace;font-size:13px;color:var(--gold);min-height:20px;margin-top:14px}
+
+/* S5 phone installer */
+.phonewrap{display:grid;grid-template-columns:auto 1fr;gap:52px;align-items:center;width:100%}
+.phone{width:clamp(220px,26vh,270px);aspect-ratio:.5;border-radius:34px;border:2px solid rgba(243,233,217,.25);
+  background:linear-gradient(170deg,#191009,#0e0906);position:relative;padding:44px 16px 20px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.phone .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:78px;height:10px;border-radius:6px;background:rgba(243,233,217,.14)}
+.phone.reset{border-color:rgba(86,194,167,.5);transition:1s}
+.app{border-radius:14px;border:1px solid rgba(243,233,217,.14);background:rgba(255,255,255,.03);padding:12px;margin-bottom:12px;transition:.5s}
+.app .arow{display:flex;align-items:center;gap:10px}
+.app .aicon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none;
+  background:linear-gradient(160deg,rgba(255,122,26,.3),rgba(255,194,75,.15))}
+.app .aname{font-weight:700;font-size:13px;line-height:1.05}
+.app .aname small{display:block;font-weight:400;font-size:10px;color:var(--clay);margin-top:2px}
+.app .get{margin-left:auto;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.06em;padding:5px 11px;border-radius:16px;
+  border:1px solid var(--gold);color:var(--gold);background:transparent;cursor:pointer;flex:none}
+.app .bar{height:4px;border-radius:3px;background:rgba(243,233,217,.12);margin-top:9px;overflow:hidden;display:none}
+.app .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--ember));transition:width 1.1s ease}
+.app.installing .bar{display:block}
+.app.done{border-color:var(--ember);background:rgba(255,122,26,.10)}
+.app.done .get{border-color:var(--ember);color:var(--ember-bright)}
+.phone.reset .app{opacity:.15;filter:grayscale(1)}
+.beliefs{display:flex;flex-direction:column;gap:14px}
+.belief{border-left:2px solid rgba(243,233,217,.15);padding-left:16px;font-size:clamp(16px,1.9vw,21px);line-height:1.4;
+  color:var(--clay);opacity:.25;transition:.6s}
+.belief.on{opacity:1;color:var(--ash);border-left-color:var(--ember)}
+.belief .serif-i{color:var(--gold)}
+.osnote{font-size:15px;color:var(--clay);margin-top:6px;opacity:0;transition:.7s}
+.osnote.on{opacity:1}
+
+/* S7 noble path */
+.path{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:100%;margin-top:14px}
+.stone{border-radius:18px;border:1px solid rgba(243,233,217,.15);background:rgba(255,255,255,.025);padding:22px 18px;
+  cursor:pointer;transition:.3s;min-height:190px;display:flex;flex-direction:column;gap:8px}
+.stone:hover{border-color:var(--gold);transform:translateY(-3px)}
+.stone .snum{font-family:"Fraunces",serif;font-weight:900;font-size:34px;color:rgba(243,233,217,.25);line-height:.9}
+.stone h4{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(16px,1.8vw,21px);line-height:1.05}
+.stone .pp{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.06em;color:var(--gold)}
+.stone p{font-size:13.5px;line-height:1.45;color:var(--clay);opacity:0;max-height:0;overflow:hidden;transition:.45s}
+.stone.open p{opacity:1;max-height:220px}
+.stone.open{background:rgba(255,255,255,.05)}
+.stone.hot{border-color:var(--ember);background:rgba(255,122,26,.12);box-shadow:0 0 40px rgba(255,122,26,.25)}
+.stone.hot .snum{color:var(--ember)}
+.campnote{font-size:clamp(15px,1.8vw,20px);color:var(--clay);margin-top:16px;opacity:0;transition:.7s}
+.campnote.on{opacity:1}
+
+/* S9 three tanha cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%;margin-top:12px}
+.card{height:clamp(280px,40vh,380px);perspective:1400px;cursor:pointer}
+.card .face{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.card.flip .face{transform:rotateY(180deg)}
+.cside{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;padding:24px;
+  display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(243,233,217,.15)}
+.cfront{background:linear-gradient(160deg,rgba(255,122,26,.10),rgba(255,255,255,.02))}
+.cback{background:linear-gradient(160deg,rgba(86,194,167,.10),rgba(255,255,255,.02));transform:rotateY(180deg)}
+.card .glyph{font-size:38px}
+.card .pali{font-family:"Fraunces",serif;font-weight:600;font-size:24px;line-height:1;margin-top:auto}
+.card .pali small{display:block;font-family:"Space Mono",monospace;font-size:12px;color:var(--gold);font-weight:400;letter-spacing:.06em;margin-top:8px}
+.card .meaning{font-size:16px;line-height:1.4;color:var(--ash)}
+.card .ex2{font-size:14px;line-height:1.5;color:var(--clay)}
+.card .tap{font-family:"Space Mono",monospace;font-size:11px;color:var(--gold);letter-spacing:.1em}
+
+/* S10 engine */
+.engine{width:100%;margin-top:10px}
+.stage{border:1px solid rgba(243,233,217,.14);border-radius:14px;background:rgba(255,255,255,.02);
+  margin-bottom:10px;overflow:hidden;cursor:pointer;transition:.3s}
+.stage:hover{border-color:var(--gold)}
+.stage .shead{display:flex;align-items:center;gap:14px;padding:14px 18px}
+.stage .gear{font-size:22px;transition:transform .8s ease;flex:none}
+.stage.open .gear{transform:rotate(180deg)}
+.stage .stitle{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(16px,2vw,22px)}
+.stage .sn{font-family:"Space Mono",monospace;font-size:11px;color:var(--gold);letter-spacing:.08em;margin-left:auto;flex:none}
+.stage .sbody{max-height:0;opacity:0;transition:.45s;padding:0 18px}
+.stage.open .sbody{max-height:140px;opacity:1;padding:0 18px 16px 54px}
+.stage.open{border-color:var(--ember);background:rgba(255,122,26,.08)}
+.stage .sbody p{font-size:clamp(14px,1.6vw,17px);line-height:1.5;color:var(--clay)}
+.stage .sbody b{color:var(--ash)}
+
+/* S11 poisons */
+.poisonwrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;width:100%}
+.tree{position:relative;height:clamp(260px,42vh,360px);margin:0 auto;width:100%;max-width:420px}
+.pnode{position:absolute;width:118px;height:118px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;cursor:pointer;transition:.35s;border:1.5px solid rgba(243,233,217,.2);background:rgba(255,255,255,.03)}
+.pnode:hover{transform:scale(1.06)}
+.pnode .pg{font-size:26px}
+.pnode .pn{font-family:"Fraunces",serif;font-weight:600;font-size:17px;line-height:1}
+.pnode .pe{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.06em;color:var(--clay);margin-top:3px}
+.pnode.lobha{left:6%;top:6%}.pnode.dosa{right:6%;top:6%}
+.pnode.moha{left:50%;bottom:0;transform:translateX(-50%);width:136px;height:136px}
+.pnode.moha:hover{transform:translateX(-50%) scale(1.06)}
+.pnode.lit.lobha{border-color:var(--gold);background:rgba(255,194,75,.14);box-shadow:0 0 36px rgba(255,194,75,.35)}
+.pnode.lit.dosa{border-color:var(--rage);background:rgba(224,69,69,.14);box-shadow:0 0 36px rgba(224,69,69,.35)}
+.pnode.lit.moha{border-color:var(--ember);background:rgba(255,122,26,.16);box-shadow:0 0 50px rgba(255,122,26,.45)}
+.vein{position:absolute;width:2px;background:linear-gradient(180deg,transparent,rgba(255,122,26,.0));transform-origin:bottom center;transition:1s}
+.vein.v1{left:32%;bottom:26%;height:34%;transform:rotate(28deg)}
+.vein.v2{right:32%;bottom:26%;height:34%;transform:rotate(-28deg)}
+.tree.rooted .vein{background:linear-gradient(180deg,rgba(255,194,75,.7),rgba(255,122,26,.9))}
+.pdetail{min-height:120px}
+.pdetail .ptitle{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(22px,3vw,34px);margin-bottom:8px}
+.pdetail p{font-size:clamp(15px,1.8vw,20px);line-height:1.5;color:var(--clay)}
+.rootreveal{margin-top:18px;font-size:clamp(15px,1.8vw,20px);line-height:1.5;color:var(--ash);opacity:0;transition:.8s;border-left:2px solid var(--ember);padding-left:16px}
+.rootreveal.on{opacity:1}
+.kchip{display:inline-flex;align-items:center;gap:8px;font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.06em;
+  color:var(--gold);border:1px solid rgba(255,194,75,.4);background:rgba(255,194,75,.06);border-radius:22px;
+  padding:7px 14px;cursor:pointer;transition:.2s;margin-bottom:14px}
+.kchip:hover{border-color:var(--gold);background:rgba(255,194,75,.12)}
+.kchip .kx{font-weight:700;transition:transform .3s}
+.kchip.open .kx{transform:rotate(45deg)}
+.kpanel{max-height:0;opacity:0;overflow:hidden;transition:.5s;border-radius:14px;margin-bottom:14px}
+.kpanel.open{max-height:260px;opacity:1;margin-bottom:20px}
+.kpanel .kin{border:1px solid rgba(243,233,217,.15);background:rgba(255,255,255,.03);border-radius:14px;padding:18px 20px}
+.kpanel p{font-size:clamp(14px,1.6vw,17px);line-height:1.55;color:var(--clay)}
+.kpanel p+p{margin-top:10px}
+.kpanel b{color:var(--ash)}
+.kpanel .venn{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap;font-family:"Space Mono",monospace;font-size:12px}
+.kpanel .vbig{color:var(--jade);border:1px solid var(--jade);border-radius:18px;padding:5px 12px}
+.kpanel .vsmall{color:var(--ember-bright);border:1px solid var(--ember);border-radius:18px;padding:5px 12px}
+.kpanel .varrow{color:var(--clay)}
+
+/* discussion / close */
+.prompts{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;margin-top:18px}
+.prompt{border-radius:16px;padding:20px 22px;border:1px solid rgba(243,233,217,.15);background:rgba(255,255,255,.02);display:flex;gap:14px;align-items:flex-start}
+.prompt .q{font-family:"Fraunces",serif;font-weight:900;color:var(--ember);font-size:28px;line-height:.9;flex:none}
+.prompt p{font-size:clamp(14px,1.6vw,18px);line-height:1.35;color:var(--ash)}
+.afterletgo{opacity:0;max-height:0;overflow:hidden;transition:opacity 1.4s ease 1s}
+.afterletgo.show{opacity:1;max-height:400px}
+.bigflame{transform:scale(1.4);margin:6px 0 26px;transition:transform 2s,filter 2s}
+body.settled .bigflame{transform:scale(.9);filter:drop-shadow(0 0 50px rgba(86,194,167,.45)) hue-rotate(110deg) saturate(.8)}
+
+@media (max-width:880px){
+  .scalewrap,.phonewrap,.poisonwrap{grid-template-columns:1fr;gap:26px}
+  .phone{margin:0 auto}
+  .path{grid-template-columns:repeat(2,1fr)}
+  .cards{grid-template-columns:1fr;gap:14px}.card{height:auto;min-height:190px;perspective:none}
+  .card .face{transition:none}.card.flip .face{transform:none}
+  .cside{position:relative;backface-visibility:visible}.cback{transform:none;display:none}
+  .card.flip .cfront{display:none}.card.flip .cback{display:flex}
+  .prompts{grid-template-columns:1fr}.kbhint{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition-duration:.001s !important}}
+</style>
+</head>
+<body>
+<canvas id="ambient"></canvas>
+<div class="glow"></div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide center" data-slide>
+    <div class="inner">
+      <div class="flame" data-anim style="margin:0 auto 22px"><div class="body"></div><div class="core"></div></div>
+      <div class="eyebrow c" data-anim>workshop 2 of 2 · consumerism × theravāda buddhism</div>
+      <h1 data-anim>The Wanting<br>Machine</h1>
+      <p class="lede" data-anim style="margin:20px auto 0;text-align:center;max-width:36ch">
+        Last time we met the thirst inside you. Today: the trillion-dollar machine built to <span class="em">keep it burning</span>.</p>
+      <p class="tiny" data-anim style="margin-top:28px">press → or swipe to begin</p>
+    </div>
+  </section>
+
+  <!-- 2 RECAP QUIZ -->
+  <section class="slide" data-slide data-init="quiz">
+    <div class="inner">
+      <div class="eyebrow" data-anim>pop quiz · zero stakes · shout it out</div>
+      <h2 data-anim style="margin-bottom:20px">Still got it from last time?</h2>
+      <div class="quiz" data-anim>
+        <div class="qq" id="qq">Loading…</div>
+        <div class="qopts" id="qopts"></div>
+        <div class="qfeed" id="qfeed"></div>
+        <div class="qprog" id="qprog"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 WHAT IS CONSUMERISM -->
+  <section class="slide" data-slide data-init="scale">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the honest definition</div>
+      <h2 data-anim style="margin-bottom:8px">What is consumerism?</h2>
+      <p class="sub" data-anim style="margin-top:4px;max-width:56ch">Economically: a system where <b style="color:var(--ash)">buying more stuff drives growth</b> — so more consuming is treated as good, always. It's also a <span class="emg">mindset and a culture</span> — more = better, newer = happier, you = what you own — and that mindset has a name: <b style="color:var(--ash)">materialism</b>. Fair trial though — tap each chip: <span class="jade">benefit</span> or <span class="em">drawback</span>?</p>
+      <div class="scalewrap" style="margin-top:16px">
+        <div class="scale" data-anim>
+          <div class="beam" id="beam">
+            <div class="pan l"><div class="dish"><div class="cnt" id="cntB">0</div></div><div class="plabel">benefits</div></div>
+            <div class="pan r"><div class="dish"><div class="cnt" id="cntD">0</div></div><div class="plabel">drawbacks</div></div>
+          </div>
+          <div class="pivot"></div>
+        </div>
+        <div data-anim>
+          <div class="scalechips" id="schips"></div>
+          <div class="sverdict" id="sverdict">— your call first, then tap —</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 BRIDGE -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>so what's buddhism got to do with it?</div>
+      <h2 data-anim>The machine runs on<br>three familiar fuels.</h2>
+      <p class="sub" data-anim style="color:var(--ash);max-width:46ch"><span class="em">Craving</span> — you must keep wanting. <span class="em">Dissatisfaction</span> — you must never feel you have enough. <span class="em">Identity</span> — you must believe stuff says who you are.</p>
+      <p class="sub" data-anim>Sound familiar? Those are the exact three things the Buddha diagnosed 2,500 years before the first shopping mall. Materialism didn't invent the thirst — <span class="serif-i" style="color:var(--gold)">the machine industrialised it.</span></p>
+    </div>
+  </section>
+
+  <!-- 5 PHONE INSTALLER -->
+  <section class="slide" data-slide data-init="phone">
+    <div class="inner">
+      <div class="eyebrow" data-anim>materialism · the operating system it installs · tap "get"</div>
+      <h2 data-anim style="margin-bottom:24px">What it installs in your head.</h2>
+      <div class="phonewrap">
+        <div class="phone" data-anim id="phone">
+          <div class="notch"></div>
+          <div class="app" data-app="0">
+            <div class="arow"><div class="aicon">🧩</div><div class="aname">CompleteMe<small>lifestyle · free*</small></div><button class="get">GET</button></div>
+            <div class="bar"><i></i></div>
+          </div>
+          <div class="app" data-app="1">
+            <div class="arow"><div class="aicon">🏷️</div><div class="aname">WorthOS<small>identity · free*</small></div><button class="get">GET</button></div>
+            <div class="bar"><i></i></div>
+          </div>
+          <div class="app" data-app="2">
+            <div class="arow"><div class="aicon">♾️</div><div class="aname">ForeverGood<small>happiness · free*</small></div><button class="get">GET</button></div>
+            <div class="bar"><i></i></div>
+          </div>
+        </div>
+        <div data-anim>
+          <div class="beliefs">
+            <div class="belief" data-belief="0"><b>Belief 1:</b> <span class="serif-i">"I will be complete if I get this."</span> Wholeness is always one purchase away — so it never arrives.</div>
+            <div class="belief" data-belief="1"><b>Belief 2:</b> <span class="serif-i">"My value depends on what I own, display, or consume."</span> Self-worth, outsourced to objects and audiences.</div>
+            <div class="belief" data-belief="2"><b>Belief 3:</b> <span class="serif-i">"Pleasure can be made permanent — just keep re-buying it."</span> Chasing a stable high from unstable things.</div>
+          </div>
+          <p class="osnote" id="osnote">*free, except it costs your contentment. The good news: <span class="jade">what was installed can be uninstalled.</span></p>
+          <button class="btn calm" id="resetBtn" style="margin-top:16px;display:none">factory-reset the mind</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 CRAVING = SUFFERING -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>the diagnosis · taṇhā</div>
+      <h2 data-anim>Craving is the cause<br>of suffering.</h2>
+      <p class="sub" data-anim style="color:var(--ash);max-width:44ch"><span class="em">Taṇhā</span> — literally <span class="emg">thirst</span>. The grasping that whispers <span class="serif-i" style="color:var(--gold)">"this isn't enough."</span> Feed it, and like fire it doesn't get satisfied — it gets <b>bigger</b>.</p>
+      <p class="sub" data-anim>Last workshop that was personal psychology. Today, watch it become a <span class="em">business model</span>. But first — where does this sit in the big picture?</p>
+    </div>
+  </section>
+
+  <!-- 7 FOUR NOBLE TRUTHS -->
+  <section class="slide" data-slide data-init="path">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the four noble truths · tap each stone</div>
+      <h2 data-anim style="margin-bottom:8px">The map — and where<br>we're camping today.</h2>
+      <div class="path" data-anim>
+        <div class="stone" data-stone="0"><div class="snum">1</div><h4>There is dukkha</h4><span class="pp">dukkha · the truth of suffering</span><p>Life carries a built-in ache — stress, loss, never-quite-enough. Not pessimism; diagnosis.</p></div>
+        <div class="stone" data-stone="1"><div class="snum">2</div><h4>It has an origin</h4><span class="pp">samudaya · the origin of suffering</span><p><b style="color:var(--ash)">The origin of suffering is attachment to desire</b> — craving, taṇhā. This is our whole lesson today.</p></div>
+        <div class="stone" data-stone="2"><div class="snum">3</div><h4>It can cease</h4><span class="pp">nirodha · the cessation</span><p>Un-feed the craving and the suffering cools. Freedom is possible — not by getting more, but by grasping less.</p></div>
+        <div class="stone" data-stone="3"><div class="snum">4</div><h4>There is a path</h4><span class="pp">magga · the way</span><p>The Noble Eightfold Path — a practical training of view, intention, action, and mind.</p></div>
+      </div>
+      <p class="campnote" id="campnote">⛺ Today we camp on <span class="em">stone 2</span>: if craving is the origin of suffering… what happens when an entire economy is designed to <b style="color:var(--ash)">maximise craving</b>?</p>
+    </div>
+  </section>
+
+  <!-- 8 SECOND TRUTH DEEP -->
+  <section class="slide center" data-slide>
+    <div class="inner">
+      <div class="eyebrow c" data-anim>the second noble truth</div>
+      <h2 data-anim style="max-width:22ch">The origin of suffering is<br><span class="em">attachment to desire.</span></h2>
+      <p class="sub" data-anim style="text-align:center;margin:22px auto 0;max-width:42ch;color:var(--ash)">Not the wanting itself — the <span class="emg">grasping</span>. And the suttas say this thirst comes in <b>three flavours</b>. The machine has a product for every single one.</p>
+    </div>
+  </section>
+
+  <!-- 9 THREE TANHA -->
+  <section class="slide" data-slide data-init="cards">
+    <div class="inner">
+      <div class="eyebrow" data-anim>three kinds of craving · tap to see how each is sold to you</div>
+      <h2 data-anim style="margin-bottom:6px">Three thirsts, three markets.</h2>
+      <div class="cards">
+        <div class="card" data-anim data-card>
+          <div class="face">
+            <div class="cside cfront">
+              <div class="glyph">🍭</div>
+              <div class="pali">Craving for<br>pleasure<small>kāma-taṇhā</small></div>
+              <div class="tap">tap · how it's sold ↻</div>
+            </div>
+            <div class="cside cback">
+              <div class="meaning">Thirst for sense-pleasures — tastes, sights, sounds, hits of nice.</div>
+              <div class="ex2"><b>Sold as:</b> snacks engineered to be un-stoppable, infinite scroll, autoplay, "limited drop" dopamine. The pleasure economy.</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-anim data-card>
+          <div class="face">
+            <div class="cside cfront">
+              <div class="glyph">👑</div>
+              <div class="pali">Craving to<br>become<small>bhava-taṇhā</small></div>
+              <div class="tap">tap · how it's sold ↻</div>
+            </div>
+            <div class="cside cback">
+              <div class="meaning">Thirst to <em>be</em> someone — status, image, an upgraded self.</div>
+              <div class="ex2"><b>Sold as:</b> brands as personality, aesthetics as identity, "be the main character", flex culture. The identity economy.</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-anim data-card>
+          <div class="face">
+            <div class="cside cfront">
+              <div class="glyph">🕳️</div>
+              <div class="pali">Craving to<br>escape<small>vibhava-taṇhā</small></div>
+              <div class="tap">tap · how it's sold ↻</div>
+            </div>
+            <div class="cside cback">
+              <div class="meaning">Thirst for non-being — to numb out, not feel, not be here.</div>
+              <div class="ex2"><b>Sold as:</b> retail therapy, binge-anything, doom-scroll-to-disappear, "treat yourself" as anaesthetic. The escape economy.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="sub" data-anim style="margin-top:12px">Whatever flavour your thirst is — <span class="em">there's an aisle for it.</span></p>
+    </div>
+  </section>
+
+  <!-- 10 ENGINE -->
+  <section class="slide" data-slide data-init="engine">
+    <div class="inner">
+      <div class="eyebrow" data-anim>inside the machine · open each stage</div>
+      <h2 data-anim style="margin-bottom:14px">How it keeps you thirsty.</h2>
+      <div class="engine" data-anim>
+        <div class="stage" data-stage><div class="shead"><span class="gear">⚙️</span><span class="stitle">It stimulates craving</span><span class="sn">stage 1</span></div>
+          <div class="sbody"><p>Advertising works by first creating a sense of <b>lack</b> — a "need" you didn't have five seconds ago. It manufactures the thirst, then charges you for water.</p></div></div>
+        <div class="stage" data-stage><div class="shead"><span class="gear">⚙️</span><span class="stitle">It strengthens the clinging of self</span><span class="sn">stage 2</span></div>
+          <div class="sbody"><p>Every purchase becomes a brick in "who I am". The more <b>me</b> is built out of stuff, the more there is to defend, compare, and lose.</p></div></div>
+        <div class="stage" data-stage><div class="shead"><span class="gear">⚙️</span><span class="stitle">It keeps the mind searching outward</span><span class="sn">stage 3</span></div>
+          <div class="sbody"><p>Happiness is always <b>out there</b> — next drop, next upgrade, next haul. A mind aimed permanently outward never gets to settle where it actually lives.</p></div></div>
+        <div class="stage" data-stage><div class="shead"><span class="gear">⚙️</span><span class="stitle">It depends on impermanence — but denies it</span><span class="sn">stage 4</span></div>
+          <div class="sbody"><p>The whole model <b>needs</b> things to fade — trends die, tech ages, joy wears off — or you'd stop buying. Yet every ad promises <b>this one will last</b>. It runs on anicca while selling you its opposite.</p></div></div>
+        <div class="stage" data-stage><div class="shead"><span class="gear">⚙️</span><span class="stitle">It dulls gratitude and contentment</span><span class="sn">stage 5</span></div>
+          <div class="sbody"><p>Contentment is the one thing the machine can't sell — so it's treated as the enemy. "Enough" gets drowned out by "next". Gratitude is the off-switch.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 POISONS -->
+  <section class="slide" data-slide data-init="poison">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the kilesas · defilements of the mind · tap each</div>
+      <h2 data-anim style="margin-bottom:14px">The three poisons<br>under the hood.</h2>
+      <div data-anim>
+        <button class="kchip" id="kchip"><span class="kx">+</span> wait — what's a kilesa?</button>
+        <div class="kpanel" id="kpanel"><div class="kin">
+          <p><b>Kilesa</b> = any defilement — the mind's weeds. The traditional lists run long: greed, hatred, delusion, conceit, wrong view, doubt, restlessness, shamelessness…</p>
+          <p>The <b>three poisons</b> are the three <b>root</b> kilesas — the <i>akusala-mūla</i>, "unwholesome roots" — that every other one grows from. So: every poison is a kilesa; these three are the roots of the whole tangle. <span style="color:var(--clay)">(In Theravāda they're often just called the <b>three unwholesome roots</b>; "three poisons" is the catchy borrowed name.)</span></p>
+          <div class="venn"><span class="vbig">all kilesas</span><span class="varrow">⊃</span><span class="vsmall">lobha · dosa · moha (the roots)</span></div>
+        </div></div>
+      </div>
+      <div class="poisonwrap">
+        <div class="tree" data-anim id="ptree">
+          <div class="vein v1"></div><div class="vein v2"></div>
+          <div class="pnode lobha" data-poison="lobha"><span class="pg">🤑</span><span class="pn">Lobha</span><span class="pe">greed</span></div>
+          <div class="pnode dosa" data-poison="dosa"><span class="pg">😤</span><span class="pn">Dosa</span><span class="pe">hatred / aversion</span></div>
+          <div class="pnode moha" data-poison="moha"><span class="pg">🌫️</span><span class="pn">Moha</span><span class="pe">delusion</span></div>
+        </div>
+        <div data-anim>
+          <div class="pdetail">
+            <div class="ptitle" id="ptitle">Tap a poison.</div>
+            <p id="pdesc">Kilesas are the mind's pollutants — the states that cloud, burn, and drive it. Three are called the roots of all the rest.</p>
+          </div>
+          <div class="rootreveal" id="rootreveal">And beneath even greed and hatred sits <b>moha — delusion, ignorance</b>: not-seeing things as they are. That's the <span class="em">taproot of all defilements</span>. The machine doesn't need you evil — it just needs you <span class="serif-i emg">not looking closely.</span> Which is why <b>seeing clearly is the whole practice.</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 SO WHAT -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>so what do we do — quit the world?</div>
+      <h2 data-anim style="margin-bottom:6px">No. Just stop being<br>a <span class="em">buyer on autopilot</span>.</h2>
+      <p class="sub" data-anim style="color:var(--ash);max-width:48ch">You'll still buy things. Autopilot is just moha wearing a wallet — the move is to see the machine while it works on you: notice the manufactured lack, name the flavour of thirst, remember the last "must-have" that's now in a drawer.</p>
+      <p class="sub" data-anim>Every time you <span class="jade">see</span> the mechanism, moha thins. And a mind that sees clearly can enjoy things <span class="serif-i" style="color:var(--gold)">without being owned by them.</span></p>
+    </div>
+  </section>
+
+  <!-- 13 DISCUSSION -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>talk it out · pairs, then the room</div>
+      <h2 data-anim style="margin-bottom:4px">Your turn.</h2>
+      <div class="prompts">
+        <div class="prompt" data-anim><span class="q">1</span><p>Which of the three installed beliefs runs deepest in you — <i>complete-me</i>, <i>worth = stuff</i>, or <i>permanent pleasure</i>?</p></div>
+        <div class="prompt" data-anim><span class="q">2</span><p>Which thirst does your feed sell to most — <span class="em">kāma</span> (pleasure), <span class="em">bhava</span> (identity), or <span class="em">vibhava</span> (escape)?</p></div>
+        <div class="prompt" data-anim><span class="q">3</span><p>Where do you see <span class="emg">lobha, dosa, or moha</span> in one recent purchase or scroll session?</p></div>
+        <div class="prompt" data-anim><span class="q">4</span><p>The machine has real benefits too. Where's the line between <span class="jade">using it</span> and <span class="em">being used by it</span>?</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 CLOSE -->
+  <section class="slide center" data-slide data-init="letgo">
+    <div class="inner">
+      <div class="flame bigflame" data-anim><div class="body"></div><div class="core"></div></div>
+      <h2 data-anim style="max-width:22ch">The machine needs<br>you thirsty.</h2>
+      <p class="sub" data-anim style="text-align:center;margin:18px auto 0;max-width:34ch;font-size:clamp(18px,2.3vw,26px);color:var(--ash)">
+        Your freedom is one honest look away: <span class="serif-i em">see the thirst, and it loosens.</span></p>
+      <button class="btn calm" data-anim id="letgoBtn" style="margin-top:26px">let it settle</button>
+      <div class="afterletgo" id="afterletgo">
+        <p class="pron" style="margin-top:28px">contentment · the one thing they can't sell you</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="dots" id="dots"></div>
+<div class="nav"><button id="prev">‹</button><span class="counter" id="counter">01 / 14</span><button id="next">›</button></div>
+<div class="kbhint">← → arrows · space · swipe</div>
+
+<script>
+const slides=[...document.querySelectorAll('[data-slide]')];
+const dotsWrap=document.getElementById('dots');const counter=document.getElementById('counter');
+const prevB=document.getElementById('prev'),nextB=document.getElementById('next');
+let idx=0;const inited=new Set();
+const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+slides.forEach((_,i)=>{const d=document.createElement('i');d.onclick=()=>go(i);dotsWrap.appendChild(d)});
+const dots=[...dotsWrap.children];
+function go(n){
+  n=Math.max(0,Math.min(slides.length-1,n));
+  slides[idx].classList.remove('active');idx=n;
+  const s=slides[idx];s.classList.add('active');
+  const els=[...s.querySelectorAll('[data-anim]')];
+  els.forEach(e=>e.classList.remove('in'));
+  els.forEach((e,i)=>setTimeout(()=>e.classList.add('in'),reduce?0:85*i));
+  dots.forEach((d,i)=>d.classList.toggle('on',i===idx));
+  counter.textContent=String(idx+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  prevB.disabled=idx===0;nextB.disabled=idx===slides.length-1;
+  const key=s.dataset.init;if(key&&!inited.has(key)){inited.add(key);(initers[key]||(()=>{}))(s);}
+}
+nextB.onclick=()=>go(idx+1);prevB.onclick=()=>go(idx-1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(idx+1);}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(idx-1);}
+  if(e.key==='Home')go(0);if(e.key==='End')go(slides.length-1);
+});
+let tx=0;addEventListener('touchstart',e=>tx=e.changedTouches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>60)go(idx+(dx<0?1:-1));},{passive:true});
+
+const initers={};
+
+// S2 quiz
+initers.quiz=(s)=>{
+  const qs=[
+    {q:"The Pāli word for the thirst that drives suffering?",opts:["Chanda","Taṇhā","Dukkha","Karma"],a:1,
+     w:"Taṇhā — literally thirst. Chanda is the healthy aspiration; dukkha is the ache it causes."},
+    {q:"The tell between chanda and taṇhā was…",opts:["Cheap vs expensive","Wanting vs needing","Does it open you or grip you?","Old vs new"],a:2,
+     w:"Right — chanda moves you and lets go; taṇhā grips and never stays full."},
+    {q:"And craving is the cause of…",opts:["Success","Suffering","Motivation","Shopping"],a:1,
+     w:"Suffering — dukkha. That's the Second Noble Truth, and today's whole hunting ground."},
+  ];
+  let i=0,score=0,locked=false;
+  const qq=s.querySelector('#qq'),qopts=s.querySelector('#qopts'),qfeed=s.querySelector('#qfeed'),qprog=s.querySelector('#qprog');
+  function load(){
+    locked=false;const cur=qs[i];qq.textContent=cur.q;qfeed.textContent='';qopts.innerHTML='';
+    qprog.textContent='question '+(i+1)+' of '+qs.length+' · score '+score;
+    cur.opts.forEach((o,k)=>{
+      const b=document.createElement('button');b.className='qopt';b.textContent=o;
+      b.onclick=()=>{
+        if(locked)return;locked=true;
+        if(k===cur.a){b.classList.add('right');score++;}
+        else{b.classList.add('wrong');[...qopts.children][cur.a].classList.add('right');}
+        qfeed.textContent=cur.w;qprog.textContent='question '+(i+1)+' of '+qs.length+' · score '+score;
+        i++;
+        if(i<qs.length)setTimeout(load,2100);
+        else setTimeout(()=>{qq.textContent=score===qs.length?"Perfect. Memory like a monk. 🧘":"Solid — "+score+"/"+qs.length+". Warmed up.";
+          qopts.innerHTML='';qfeed.textContent="Now let's aim all of that at the machine.";},2100);
+      };
+      qopts.appendChild(b);
+    });
+  }
+  load();
+};
+
+// S3 scale
+initers.scale=(s)=>{
+  const chips=[
+    {t:"jobs & livelihoods",side:"b",w:"benefit — whole industries and families run on it"},
+    {t:"innovation & better products",side:"b",w:"benefit — competition really does improve things"},
+    {t:"choice & convenience",side:"b",w:"benefit — options your grandparents never had"},
+    {t:"raised living standards",side:"b",w:"benefit — consumption lifted many out of scarcity"},
+    {t:"debt & overwork to keep up",side:"d",w:"drawback — buying tomorrow's money for today's wants"},
+    {t:"waste & environmental cost",side:"d",w:"drawback — landfills full of last year's must-haves"},
+    {t:"status anxiety & comparison",side:"d",w:"drawback — a race with a finish line that moves"},
+    {t:"the never-enough mindset",side:"d",w:"drawback — and this one is today's subject"},
+  ];
+  const wrap=s.querySelector('#schips'),beam=s.querySelector('#beam'),
+    cb=s.querySelector('#cntB'),cd=s.querySelector('#cntD'),verdict=s.querySelector('#sverdict');
+  let b=0,d=0,used=0;
+  chips.forEach(c=>{
+    const el=document.createElement('div');el.className='schip';el.textContent=c.t;
+    el.onclick=()=>{
+      el.classList.add('used',c.side);
+      if(c.side==='b')b++;else d++;
+      cb.textContent=b;cd.textContent=d;
+      const tilt=Math.max(-10,Math.min(10,(d-b)*2.6));
+      beam.style.transform='translateX(-50%) rotate('+tilt+'deg)';
+      verdict.textContent='"'+c.t+'" — '+c.w;
+      used++;
+      if(used>=chips.length)verdict.textContent='verdict: genuinely useful system — with a mindset problem. that mindset is our target.';
+    };
+    wrap.appendChild(el);
+  });
+};
+
+// S5 phone
+initers.phone=(s)=>{
+  const apps=[...s.querySelectorAll('[data-app]')];
+  const beliefs=[...s.querySelectorAll('[data-belief]')];
+  const osnote=s.querySelector('#osnote'),resetBtn=s.querySelector('#resetBtn'),phone=s.querySelector('#phone');
+  let done=0;
+  apps.forEach((app,i)=>{
+    const btn=app.querySelector('.get'),bar=app.querySelector('.bar i');
+    btn.onclick=()=>{
+      if(app.classList.contains('done')||app.classList.contains('installing'))return;
+      app.classList.add('installing');btn.textContent='…';
+      requestAnimationFrame(()=>bar.style.width='100%');
+      setTimeout(()=>{
+        app.classList.remove('installing');app.classList.add('done');btn.textContent='OPEN';
+        beliefs[i].classList.add('on');done++;
+        if(done>=apps.length){osnote.classList.add('on');resetBtn.style.display='inline-block';}
+      },reduce?60:1150);
+    };
+  });
+  resetBtn.onclick=()=>{
+    phone.classList.add('reset');
+    beliefs.forEach(b=>b.style.opacity='.35');
+    resetBtn.textContent='seeing clearly ✓';resetBtn.disabled=true;
+    osnote.innerHTML='Reset = <span class="jade">awareness</span>. The beliefs lose power the moment you can see them running.';
+  };
+};
+
+// S7 path
+initers.path=(s)=>{
+  const stones=[...s.querySelectorAll('[data-stone]')];const camp=s.querySelector('#campnote');
+  let opened=new Set();
+  stones.forEach((st,i)=>{
+    st.onclick=()=>{
+      st.classList.toggle('open');
+      if(i===1)st.classList.add('hot');
+      opened.add(i);
+      if(opened.size>=4)camp.classList.add('on');
+    };
+  });
+};
+
+// S9 cards
+initers.cards=(s)=>{s.querySelectorAll('[data-card]').forEach(c=>c.onclick=()=>c.classList.toggle('flip'));};
+
+// S10 engine
+initers.engine=(s)=>{s.querySelectorAll('[data-stage]').forEach(st=>st.onclick=()=>st.classList.toggle('open'));};
+
+// S11 poisons
+initers.poison=(s)=>{
+  const kchip=s.querySelector('#kchip'),kpanel=s.querySelector('#kpanel');
+  kchip.onclick=()=>{kchip.classList.toggle('open');kpanel.classList.toggle('open');};
+  const data={
+    lobha:{t:"Lobha — greed",d:'The pull toward more: grabbing, hoarding, "I want, I need, gimme." The machine\'s favourite poison — every "BUY NOW" is lobha with a font.'},
+    dosa:{t:"Dosa — hatred / aversion",d:'The push against: irritation, envy, rejecting what is. Ads feed it too — "your current one is embarrassing", "don\'t get left behind."'},
+    moha:{t:"Moha — delusion",d:'The fog: not seeing clearly. Believing the purchase will finally satisfy, that the image is the self, that the pleasure will last. The other two poisons grow out of this one.'},
+  };
+  const title=s.querySelector('#ptitle'),desc=s.querySelector('#pdesc'),
+    tree=s.querySelector('#ptree'),root=s.querySelector('#rootreveal');
+  const seen=new Set();
+  s.querySelectorAll('[data-poison]').forEach(n=>{
+    n.onclick=()=>{
+      const k=n.dataset.poison;
+      n.classList.add('lit');seen.add(k);
+      title.textContent=data[k].t;desc.textContent=data[k].d;
+      if(k==='moha')tree.classList.add('rooted');
+      if(seen.size>=3){root.classList.add('on');tree.classList.add('rooted');}
+    };
+  });
+};
+
+// S14 letgo
+initers.letgo=(s)=>{
+  s.querySelector('#letgoBtn').onclick=()=>{
+    document.body.classList.add('settled');
+    s.querySelector('#afterletgo').classList.add('show');
+    const b=s.querySelector('#letgoBtn');b.textContent='…';b.disabled=true;
+  };
+};
+
+// ambient embers
+const cv=document.getElementById('ambient'),ctx=cv.getContext('2d');let W,H,parts=[];
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}resize();addEventListener('resize',resize);
+function spawn(){return{x:Math.random()*W,y:H+10,r:Math.random()*2+1,s:Math.random()*0.7+0.3,a:Math.random()*0.5+0.2,drift:(Math.random()-0.5)*0.4};}
+if(!reduce){
+  for(let i=0;i<46;i++){const p=spawn();p.y=Math.random()*H;parts.push(p);}
+  (function tick(){
+    ctx.clearRect(0,0,W,H);const settled=document.body.classList.contains('settled');
+    parts.forEach(p=>{p.y-=p.s;p.x+=p.drift;p.a-=0.0016;if(p.y<-10||p.a<=0)Object.assign(p,spawn());
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);
+      ctx.fillStyle=settled?`rgba(86,194,167,${p.a*0.7})`:`rgba(255,${140+Math.random()*60|0},60,${p.a})`;ctx.fill();});
+    requestAnimationFrame(tick);
+  })();
+}
+go(0);
+</script>
+</body>
+</html>
