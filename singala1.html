@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Six Directions — Siṅgālasutta, Session 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0B1120;--night2:#070C16;--card:#141E33;--card2:#1B2942;--line:#2A3B5C;
+  --dawn:#F5B841;--dawn2:#FFD37A;--teal:#45C7B8;--coral:#F0785C;--violet:#8B7FE8;
+  --cream:#E9F0F9;--mute:#8CA0BF;
+  --max:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--night2);color:var(--cream);font-family:"Inter",system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none}
+.horizon{position:fixed;left:50%;bottom:-30vh;transform:translateX(-50%);width:120vw;height:60vh;z-index:0;pointer-events:none;
+  background:radial-gradient(55% 70% at 50% 100%, rgba(245,184,65,.18), rgba(139,127,232,.08) 45%, transparent 70%);transition:1.4s}
+body.dawn .horizon{background:radial-gradient(55% 70% at 50% 100%, rgba(245,184,65,.34), rgba(69,199,184,.12) 48%, transparent 72%)}
+.deck{position:relative;z-index:2;height:100%}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  padding:clamp(24px,5vw,78px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .55s}
+.slide.active{opacity:1;visibility:visible;pointer-events:auto}
+.inner{width:100%;max-width:var(--max);margin:0 auto}
+.eyebrow{font-family:"JetBrains Mono",monospace;font-size:clamp(10px,1.05vw,13px);letter-spacing:.24em;text-transform:uppercase;
+  color:var(--dawn);display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--teal)}
+.eyebrow.c{justify-content:center}
+h1{font-family:"Space Grotesk",sans-serif;font-weight:700;line-height:.98;font-size:clamp(48px,9.5vw,124px);letter-spacing:-.03em}
+h2{font-family:"Space Grotesk",sans-serif;font-weight:600;line-height:1.04;font-size:clamp(29px,5.2vw,64px);letter-spacing:-.02em}
+.lede{font-size:clamp(17px,2.1vw,26px);line-height:1.45;color:var(--cream);max-width:34ch;margin-top:8px}
+.sub{font-size:clamp(15px,1.85vw,22px);line-height:1.55;color:var(--mute);max-width:44ch;margin-top:18px}
+.gold{color:var(--dawn)}.teal{color:var(--teal)}.coral{color:var(--coral)}.vio{color:var(--violet)}
+.i{font-style:italic}
+.mono{font-family:"JetBrains Mono",monospace;letter-spacing:.05em}
+.tiny{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.05em;color:var(--mute)}
+[data-anim]{opacity:0;transform:translateY(22px);transition:opacity .65s,transform .65s cubic-bezier(.2,.7,.2,1)}
+.slide.active [data-anim].in{opacity:1;transform:none}
+.center{align-items:center;text-align:center}.center .inner{display:flex;flex-direction:column;align-items:center}
+/* nav */
+.nav{position:fixed;z-index:30;right:clamp(18px,3vw,38px);bottom:clamp(18px,3vw,34px);display:flex;gap:10px;align-items:center}
+.nav button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);
+  color:var(--cream);font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.nav button:hover{border-color:var(--dawn);color:var(--dawn);transform:translateY(-2px)}
+.nav button:disabled{opacity:.3;cursor:default;transform:none;border-color:var(--line);color:var(--cream)}
+.counter{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--mute);min-width:46px;text-align:center}
+.dots{position:fixed;z-index:30;left:50%;transform:translateX(-50%);bottom:20px;display:flex;gap:6px}
+.dots i{width:6px;height:6px;border-radius:2px;background:var(--line);cursor:pointer;transition:.25s}
+.dots i.on{background:var(--dawn);width:20px}
+.kbhint{position:fixed;z-index:30;left:clamp(18px,3vw,38px);bottom:clamp(20px,3vw,32px);font-family:"JetBrains Mono",monospace;font-size:11px;color:#54678A}
+/* buttons */
+.btn{font-family:"Inter";font-weight:600;font-size:clamp(14px,1.45vw,17px);color:var(--night2);
+  background:var(--dawn);border:none;border-radius:10px;padding:12px 22px;cursor:pointer;transition:.18s}
+.btn:hover{background:var(--dawn2);transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn.ghost{background:transparent;color:var(--cream);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--teal);color:var(--teal);background:transparent}
+.btn.teal{background:var(--teal);color:var(--night2)}
+.btn.teal:hover{background:#6ad9cb}
+/* compass core */
+.compass{position:relative;width:min(52vh,470px);aspect-ratio:1;margin:0 auto}
+.ring{position:absolute;inset:0;border-radius:50%;border:1px solid var(--line)}
+.ring.r2{inset:13%;border-style:dashed;opacity:.55}
+.ring.spin{animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tick{position:absolute;left:50%;top:0;width:1px;height:10px;background:var(--line);transform-origin:50% calc(min(52vh,470px)/2)}
+.cme{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100px;height:100px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, var(--card2), var(--card));border:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:3}
+.cme b{font-family:"Space Grotesk";font-size:19px;font-weight:700;letter-spacing:.02em}
+.cme small{font-family:"JetBrains Mono";font-size:9px;color:var(--mute);letter-spacing:.1em;margin-top:2px}
+.dir{position:absolute;width:112px;height:112px;left:50%;top:50%;margin:-56px 0 0 -56px;border-radius:18px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;
+  border:1px solid var(--line);background:var(--card);transition:.3s;padding:8px;z-index:2}
+.dir:hover{transform:scale(1.06);border-color:var(--dawn)}
+.dir .dg{font-size:22px;line-height:1}
+.dir .dn{font-family:"Space Grotesk";font-weight:600;font-size:13.5px;line-height:1.1;margin-top:5px}
+.dir .dc{font-family:"JetBrains Mono";font-size:9px;letter-spacing:.1em;color:var(--mute);margin-top:3px}
+.dir.on{background:var(--card2);border-color:var(--dawn);box-shadow:0 0 34px rgba(245,184,65,.3)}
+.dir.on .dc{color:var(--dawn)}
+.spoke{position:absolute;left:50%;top:50%;height:1px;background:linear-gradient(90deg,var(--line),transparent);
+  transform-origin:left center;width:0;transition:width .6s ease;z-index:1}
+.spoke.on{width:32%;background:linear-gradient(90deg,var(--dawn),transparent)}
+/* intro pills */
+.pillrow{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
+.pill3{display:flex;align-items:center;gap:12px;border-radius:14px;border:1px solid var(--line);background:var(--card);
+  padding:16px 24px;cursor:pointer;transition:.3s}
+.pill3:hover{border-color:var(--dawn);transform:translateY(-3px)}
+.pill3 .pg{font-size:24px}
+.pill3 .pt{font-family:"Space Grotesk";font-weight:600;font-size:clamp(16px,1.9vw,21px)}
+.pill3.on{background:var(--card2);border-color:var(--teal);box-shadow:0 0 26px rgba(69,199,184,.18)}
+.keyline{margin-top:30px;font-family:"Space Grotesk";font-weight:500;font-size:clamp(19px,2.6vw,32px);line-height:1.35;
+  max-width:26ch;border-left:2px solid var(--dawn);padding-left:18px;opacity:0;transform:translateY(10px);transition:.8s}
+.keyline.on{opacity:1;transform:none}
+/* why six · axis diagram */
+.cube{position:relative;width:min(38vh,300px);aspect-ratio:1;margin:0 auto}
+.axis{position:absolute;left:50%;top:50%;background:var(--line);transform-origin:center}
+.ax-x{width:84%;height:1px;transform:translate(-50%,-50%)}
+.ax-y{width:1px;height:84%;transform:translate(-50%,-50%)}
+.ax-z{width:74%;height:1px;transform:translate(-50%,-50%) rotate(-38deg)}
+.cdot{position:absolute;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;border:1px solid var(--line);
+  background:var(--card);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--mute);
+  transition:.45s;opacity:.35;z-index:2}
+.cdot.lit{opacity:1;color:var(--dawn);border-color:var(--dawn);background:var(--card2);box-shadow:0 0 24px rgba(245,184,65,.35)}
+.ccore{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;
+  border:1px solid var(--teal);background:var(--card2);display:flex;align-items:center;justify-content:center;
+  font-family:"Space Grotesk";font-weight:700;font-size:13px;z-index:3}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;width:100%}
+.panel{border-radius:18px;border:1px solid var(--line);background:var(--card);padding:26px;min-height:clamp(230px,34vh,300px);
+  display:flex;flex-direction:column;justify-content:center;transition:.5s}
+.panel .plab{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.panel h3{font-family:"Space Grotesk";font-size:clamp(19px,2.3vw,26px);font-weight:600;line-height:1.15;margin-bottom:10px}
+.panel p{font-size:15px;line-height:1.55;color:var(--mute)}
+.panel.before .plab{color:var(--coral)}
+.panel.after{opacity:.25;filter:blur(1px)}
+.panel.after.show{opacity:1;filter:none;border-color:var(--teal)}
+.panel.after .plab{color:var(--teal)}
+/* S5 vote */
+.voterow{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}
+.vopt{flex:1;min-width:220px;border-radius:14px;border:1px solid var(--line);background:var(--card);padding:20px 22px;cursor:pointer;transition:.2s}
+.vopt:hover{border-color:var(--dawn);transform:translateY(-2px)}
+.vopt .vt{font-family:"Space Grotesk";font-weight:600;font-size:17px}
+.vopt .vs{font-size:13px;color:var(--mute);margin-top:5px;line-height:1.4}
+.vopt.picked{border-color:var(--teal);background:var(--card2)}
+.voteout{margin-top:20px;font-size:clamp(15px,1.8vw,20px);line-height:1.5;color:var(--cream);opacity:0;transition:.6s;
+  border-left:2px solid var(--dawn);padding-left:16px;max-width:56ch}
+.voteout.on{opacity:1}
+/* S7 reciprocity flip */
+.recwrap{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;width:100%;margin-top:10px}
+.recbox{border-radius:16px;border:1px solid var(--line);background:var(--card);padding:22px 24px;min-height:170px}
+.recbox .rl{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.12em;color:var(--dawn);text-transform:uppercase}
+.recbox h4{font-family:"Space Grotesk";font-size:19px;font-weight:600;margin:6px 0 10px}
+.recbox ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.recbox li{font-size:14px;color:var(--mute);display:flex;gap:8px;line-height:1.4}
+.recbox li::before{content:"›";color:var(--teal);flex:none}
+.recarrows{display:flex;flex-direction:column;gap:10px;align-items:center;color:var(--mute);font-size:20px}
+.recarrows span{transition:.3s}
+.recarrows.on span:first-child{color:var(--dawn);transform:translateX(3px)}
+.recarrows.on span:last-child{color:var(--teal);transform:translateX(-3px)}
+/* S9 friend game */
+.fgame{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;width:100%}
+.fcard{border-radius:18px;border:1px solid var(--line);background:var(--card);padding:28px;text-align:center;min-height:190px;
+  display:flex;flex-direction:column;justify-content:center}
+.fquote{font-family:"Space Grotesk";font-size:clamp(17px,2.1vw,23px);font-weight:500;line-height:1.35;font-style:italic}
+.fbtns{display:flex;gap:12px;justify-content:center;margin-top:20px}
+.ffeed{font-size:15px;line-height:1.45;color:var(--mute);min-height:52px;margin-top:14px}
+.fscore{font-family:"JetBrains Mono";font-size:11px;color:var(--mute);margin-top:6px}
+.flist .fl{border-radius:12px;padding:12px 16px;margin-bottom:9px;border:1px solid var(--line);background:var(--card);
+  display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.4;opacity:.45;transition:.4s}
+.flist .fl.lit{opacity:1;border-color:var(--teal);background:var(--card2)}
+.flist .fl b{color:var(--cream);font-weight:600}
+.flist .fl span.g{flex:none;font-size:15px}
+.flist .lhead{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.12em;color:var(--dawn);text-transform:uppercase;margin-bottom:8px}
+/* S10 situations */
+.sits{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;margin-top:14px}
+.sit{border-radius:16px;border:1px solid var(--line);background:var(--card);padding:20px;cursor:pointer;transition:.3s;min-height:190px;
+  display:flex;flex-direction:column;gap:8px}
+.sit:hover{border-color:var(--dawn);transform:translateY(-3px)}
+.sit .sn{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.12em;color:var(--dawn)}
+.sit .st{font-family:"Space Grotesk";font-size:16.5px;font-weight:600;line-height:1.25}
+.sit .sd{font-size:13px;line-height:1.5;color:var(--mute);opacity:0;max-height:0;overflow:hidden;transition:.45s}
+.sit.open .sd{opacity:1;max-height:200px}
+.sit.open{background:var(--card2);border-color:var(--teal)}
+.sit .sd b{color:var(--teal)}
+/* S11 my compass builder */
+.buildwrap{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;width:100%}
+.mymap{position:relative;width:min(40vh,330px);aspect-ratio:1;margin:0 auto}
+.mymap .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:84px;height:84px;border-radius:50%;
+  border:1px solid var(--dawn);background:var(--card2);display:flex;align-items:center;justify-content:center;
+  font-family:"Space Grotesk";font-weight:700;font-size:17px;z-index:2}
+.pin{position:absolute;left:50%;top:50%;padding:7px 12px;border-radius:20px;border:1px solid var(--line);background:var(--card);
+  font-size:12px;white-space:nowrap;transform:translate(-50%,-50%) scale(.4);opacity:0;transition:.5s cubic-bezier(.3,1.2,.5,1)}
+.pin.on{opacity:1}
+.namebox{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.namebox input{flex:1;min-width:180px;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--cream);
+  font-family:"Inter";font-size:15px;padding:12px 14px;outline:none;transition:.2s}
+.namebox input:focus{border-color:var(--dawn)}
+.buildhint{font-size:14px;color:var(--mute);margin-top:12px;line-height:1.5}
+/* discussion + exit */
+.prompts{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;margin-top:16px}
+.prompt{border-radius:14px;padding:18px 20px;border:1px solid var(--line);background:var(--card);display:flex;gap:12px;align-items:flex-start}
+.prompt .q{font-family:"Space Grotesk";font-weight:700;color:var(--dawn);font-size:24px;line-height:.95;flex:none}
+.prompt p{font-size:clamp(13.5px,1.55vw,17px);line-height:1.4;color:var(--cream)}
+.exitbox{border-radius:18px;border:1px dashed var(--line);background:var(--card);padding:26px 28px;width:100%;max-width:760px;margin-top:18px}
+.exitbox .el{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.14em;color:var(--dawn);text-transform:uppercase}
+.exitbox .eq{font-family:"Space Grotesk";font-size:clamp(19px,2.4vw,28px);font-weight:600;margin:8px 0 16px;line-height:1.2}
+.exitline{height:1px;background:var(--line);margin-bottom:12px}
+.keyidea{opacity:0;max-height:0;overflow:hidden;transition:.8s;margin-top:8px}
+.keyidea.show{opacity:1;max-height:220px}
+.keyidea p{font-size:clamp(15px,1.8vw,20px);line-height:1.5;color:var(--cream);border-left:2px solid var(--teal);padding-left:16px}
+/* next up */
+.upnext{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;margin-top:18px}
+.up{border-radius:14px;border:1px solid var(--line);background:var(--card);padding:16px 18px}
+.up .un{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.12em;color:var(--teal)}
+.up .ut{font-family:"Space Grotesk";font-size:15.5px;font-weight:600;margin-top:5px;line-height:1.2}
+@media (max-width:880px){
+  .split,.fgame,.buildwrap{grid-template-columns:1fr;gap:22px}
+  .recwrap{grid-template-columns:1fr}.recarrows{flex-direction:row}
+  .sits,.upnext{grid-template-columns:1fr}.prompts{grid-template-columns:1fr}
+  .pillrow{flex-direction:column}
+  .kbhint{display:none}
+  .dir{width:92px;height:92px;margin:-46px 0 0 -46px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.001s!important}}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="horizon"></div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide center" data-slide>
+    <div class="inner">
+      <div data-anim style="margin-bottom:22px">
+        <div class="compass" style="width:min(22vh,150px)">
+          <div class="ring spin"></div><div class="ring r2"></div>
+          <div class="cme" style="width:52px;height:52px"><b style="font-size:12px">ME</b></div>
+        </div>
+      </div>
+      <div class="eyebrow c" data-anim>session 1 of the siṅgālasutta series</div>
+      <h1 data-anim>The Six<br>Directions</h1>
+      <p class="lede" data-anim style="margin:20px auto 0;text-align:center;max-width:38ch">
+        A 2,500-year-old guide to <span class="gold">how to treat the people in your life</span> — parents, teachers, friends — and how they should treat you.</p>
+      <p class="tiny" data-anim style="margin-top:26px">press → or swipe to begin</p>
+    </div>
+  </section>
+
+  <!-- 2 HOOK -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>warm-up · 60 seconds</div>
+      <h2 data-anim>Name one person who<br>made this week <span class="teal">easier</span>.</h2>
+      <p class="sub" data-anim style="color:var(--cream)">A parent. A teacher. A friend who noticed you were off. Someone who covered for you.</p>
+      <p class="sub" data-anim>Now the harder one: <span class="gold">how do you care for them back?</span></p>
+      <p class="sub" data-anim style="font-style:italic;color:var(--mute)">Most of us have never been taught an answer to that. Today, someone gives us one.</p>
+    </div>
+  </section>
+
+  <!-- 3 WHAT IS IT -->
+  <section class="slide" data-slide data-init="intro">
+    <div class="inner">
+      <div class="eyebrow" data-anim>first — what is it?</div>
+      <h2 data-anim style="margin-bottom:10px">The <span class="gold">Siṅgālasutta</span>.</h2>
+      <p class="lede" data-anim style="max-width:40ch;margin-top:0">The Buddha's advice for <span class="gold">everyday life</span>.</p>
+      <div class="pillrow" data-anim>
+        <div class="pill3" data-p><span class="pg">🤝</span><span class="pt">Relationships</span></div>
+        <div class="pill3" data-p><span class="pg">⚖️</span><span class="pt">Responsibility</span></div>
+        <div class="pill3" data-p><span class="pg">🧭</span><span class="pt">Good choices</span></div>
+      </div>
+      <div class="keyline" id="introKey">
+        A good life is built on <span class="gold">respect</span>, <span class="teal">kindness</span>, and <span class="vio">responsibility</span> toward others.
+      </div>
+      <p class="tiny" data-anim id="introHint" style="margin-top:16px">tap the three →</p>
+    </div>
+  </section>
+
+  <!-- 4 THE STORY -->
+  <section class="slide" data-slide data-init="story">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the scene · early morning, ancient india</div>
+      <h2 data-anim style="margin-bottom:18px">A young man, soaking wet,<br>bowing to the sky.</h2>
+      <div class="split">
+        <div data-anim>
+          <div class="compass" style="width:min(38vh,300px)">
+            <div class="ring"></div><div class="ring r2 spin"></div>
+            <div class="cme" style="width:74px;height:74px"><b style="font-size:14px">SIṄGĀLA</b></div>
+            <div id="storyDirs"></div>
+          </div>
+        </div>
+        <div data-anim>
+          <p class="sub" style="color:var(--cream);margin-top:0">A young man named <span class="gold">Siṅgāla</span> gets up at dawn, wet hair, wet clothes, and bows to the six directions — east, south, west, north, down, up.</p>
+          <p class="sub">Why? Because his father, as he lay dying, asked him to. He isn't sure what it means — <span class="gold">he just knows his father asked</span>, and he honours that.</p>
+          <p class="sub" style="color:var(--cream)">The Buddha walks past and asks the obvious question: <span class="i gold">"Why are you doing that?"</span></p>
+          <button class="btn" id="storyBtn" style="margin-top:12px">watch him bow →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 VOTE -->
+  <section class="slide" data-slide data-init="vote">
+    <div class="inner">
+      <div class="eyebrow" data-anim>your call · pick one</div>
+      <h2 data-anim>Does bowing to the east<br>make you a <span class="gold">good person</span>?</h2>
+      <div class="voterow" data-anim>
+        <div class="vopt" data-v="0"><div class="vt">Yes — tradition matters</div><div class="vs">It honours his father. That counts for something.</div></div>
+        <div class="vopt" data-v="1"><div class="vt">No — it's just a gesture</div><div class="vs">Getting wet at dawn doesn't change how you treat people.</div></div>
+        <div class="vopt" data-v="2"><div class="vt">Depends what it means to you</div><div class="vs">A ritual without meaning is empty; with meaning it's different.</div></div>
+      </div>
+      <div class="voteout" id="voteout">The Buddha's answer is sharper than either. He says: <span class="gold">that's not how it's done.</span> The six directions were never empty sky — they're the <span class="teal">people in your life</span>. And you don't honour them by bowing. <span class="teal">You honour them by how you treat them.</span></div>
+    </div>
+  </section>
+
+  <!-- 5 THE REFRAME -->
+  <section class="slide" data-slide data-init="reframe">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the twist</div>
+      <h2 data-anim style="margin-bottom:20px">From ritual to<br><span class="gold">conduct and ethics</span>.</h2>
+      <div class="split">
+        <div class="panel before" data-anim>
+          <div class="plab">before · an empty gesture</div>
+          <h3>Bow to six directions in the sky.</h3>
+          <p>Get wet. Face east. Repeat because you were told to. Nothing in your life actually changes. Nobody is better off.</p>
+        </div>
+        <div class="panel after" id="afterPanel" data-anim>
+          <div class="plab">after · ethics in action</div>
+          <h3>Honour them by <span class="teal">how you behave</span>.</h3>
+          <p>You don't worship anyone — you <b>act well toward them</b>: no lying, no cruelty, no using people; and you do your part in each relationship. That's the real homage.</p>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;width:100%;margin-top:22px">
+        <button class="btn" data-anim id="reframeBtn">reveal the reframe →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY SIX -->
+  <section class="slide" data-slide data-init="whysix">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the obvious question</div>
+      <h2 data-anim style="margin-bottom:14px">But why <span class="gold">six</span>?</h2>
+      <div class="split" style="grid-template-columns:.9fr 1.1fr;align-items:center">
+        <div data-anim>
+          <div class="cube" id="cube">
+            <div class="axis ax-x"></div>
+            <div class="axis ax-y"></div>
+            <div class="axis ax-z"></div>
+            <div class="cdot" style="left:50%;top:8%" data-lab="up">↑</div>
+            <div class="cdot" style="left:50%;top:92%" data-lab="down">↓</div>
+            <div class="cdot" style="left:8%;top:50%" data-lab="west">←</div>
+            <div class="cdot" style="left:92%;top:50%" data-lab="east">→</div>
+            <div class="cdot" style="left:20.8%;top:72.8%" data-lab="south">↙</div>
+            <div class="cdot" style="left:79.2%;top:27.2%" data-lab="north">↗</div>
+            <div class="ccore">YOU</div>
+          </div>
+        </div>
+        <div data-anim>
+          <p class="sub" style="margin-top:0;color:var(--cream)">Because six directions is <b style="color:var(--gold)">all of space</b> — north, south, east, west, plus above and below.</p>
+          <p class="sub">Fill all six with real relationships, and <span class="teal">nobody who matters is left out</span>.</p>
+          <button class="btn" id="sixBtn" style="margin-top:8px">show me all six →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 THE COMPASS -->
+  <section class="slide" data-slide data-init="compass">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the map · tap each direction</div>
+      <h2 data-anim style="margin-bottom:10px">Your six directions.</h2>
+      <div class="split" style="grid-template-columns:1.15fr .85fr">
+        <div data-anim>
+          <div class="compass" id="compass">
+            <div class="ring"></div><div class="ring r2 spin"></div>
+            <div class="cme"><b>YOU</b><small>THE CENTRE</small></div>
+          </div>
+        </div>
+        <div data-anim>
+          <div id="dirDetail" style="min-height:150px">
+            <div class="mono" style="font-size:11px;color:var(--dawn);letter-spacing:.12em">TAP A DIRECTION</div>
+            <h3 style="font-family:'Space Grotesk';font-size:clamp(20px,2.5vw,30px);font-weight:600;margin:8px 0 10px">Six relationships. One life.</h3>
+            <p style="font-size:15px;line-height:1.6;color:var(--mute)">The Buddha maps every direction onto a group of people you're already connected to — whether you've thought about it or not.</p>
+          </div>
+          <div class="tiny" id="dirCount" style="margin-top:16px">0 / 6 uncovered</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 RECIPROCITY -->
+  <section class="slide" data-slide data-init="recip">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the part people miss</div>
+      <h2 data-anim style="margin-bottom:6px">It goes <span class="gold">both ways</span>.</h2>
+      <p class="sub" data-anim style="margin-top:6px;max-width:58ch">For <b style="color:var(--cream)">every</b> duty you have, the sutta gives the other person duties back. Care is a two-way street — even with parents and teachers.</p>
+      <div class="recwrap" style="margin-top:18px">
+        <div class="recbox" data-anim>
+          <div class="rl">you → your parents</div>
+          <h4>What you give</h4>
+          <ul><li>Support them as they age</li><li>Do your part in the family</li><li>Keep the family's good name</li><li>Be worthy of their trust</li></ul>
+        </div>
+        <div class="recarrows" id="recArrows" data-anim><span>⇢</span><span>⇠</span></div>
+        <div class="recbox" data-anim>
+          <div class="rl" style="color:var(--teal)">your parents → you</div>
+          <h4>What they give back</h4>
+          <ul><li>Keep you from harm</li><li>Support your education</li><li>Teach you what's right</li><li>Hand you your independence</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 ZOOM: FRIENDS -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>zooming in · the north direction</div>
+      <h2 data-anim>Let's talk about<br>your <span class="teal">friends</span>.</h2>
+      <p class="sub" data-anim style="color:var(--cream);max-width:48ch">Of the six, this is the one you spend the most hours inside — and the one nobody hands you a manual for.</p>
+      <p class="sub" data-anim>The sutta is blunt about it. It says some people <span class="i">look</span> like friends but aren't. And it tells you exactly how to spot them.</p>
+      <p class="sub" data-anim style="color:var(--cream);font-style:italic">Let's test whether you can.</p>
+    </div>
+  </section>
+
+  <!-- 9 FRIEND GAME -->
+  <section class="slide" data-slide data-init="friend">
+    <div class="inner">
+      <div class="eyebrow" data-anim>spot the fake friend · 6 rounds</div>
+      <h2 data-anim style="margin-bottom:18px">Real one, or not?</h2>
+      <div class="fgame">
+        <div class="fcard" data-anim>
+          <div class="fquote" id="fq">"Send it. She totally deserves it — you're never wrong."</div>
+          <div class="fbtns">
+            <button class="btn ghost" id="fFake">🚩 not a real friend</button>
+            <button class="btn teal" id="fReal">💚 real friend</button>
+          </div>
+          <div class="ffeed" id="ffeed">Which one is this?</div>
+          <div class="fscore" id="fscore">0 / 6</div>
+        </div>
+        <div class="flist" data-anim>
+          <div class="lhead">the four fakes</div>
+          <div class="fl" data-f="taker"><span class="g">🫴</span><span><b>The taker</b> — always takes, never gives back.</span></div>
+          <div class="fl" data-f="talker"><span class="g">💬</span><span><b>The talker</b> — big promises, zero follow-through.</span></div>
+          <div class="fl" data-f="flatterer"><span class="g">🪞</span><span><b>The flatterer</b> — cheers you on <i>even when you're wrong</i>; praises you to your face, trashes you behind your back.</span></div>
+          <div class="fl" data-f="reckless"><span class="g">🎲</span><span><b>The reckless one</b> — only shows up for the trouble.</span></div>
+          <div class="lhead" style="margin-top:14px">the true-hearted</div>
+          <div class="fl" data-f="true"><span class="g">💚</span><span><b>Helps you, stays through the bad, tells you the truth, actually wants your good.</b></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 SITUATIONS -->
+  <section class="slide" data-slide data-init="sits">
+    <div class="inner">
+      <div class="eyebrow" data-anim>your life · discuss, then tap to compare</div>
+      <h2 data-anim style="margin-bottom:8px">Three real situations.</h2>
+      <div class="sits">
+        <div class="sit" data-sit><div class="sn">SITUATION 01</div>
+          <div class="st">Your friend is being teased online.</div>
+          <div class="sd">Straight from the text: a true friend <b>protects you when you're careless</b>, <b>stands by you in trouble</b> — and the compassionate friend <b>stops others from speaking ill of you</b>. Not a public speech. A DM, sitting with them, refusing to laugh along. Silence is a choice too.</div></div>
+        <div class="sit" data-sit><div class="sn">SITUATION 02</div>
+          <div class="st">Big assignment due. Friends want you to skip it and game.</div>
+          <div class="sd">Notice which friend this is. <b>The reckless companion</b> shows up only for the fun. A true friend <b>wants what's actually good for you</b> — and would tell you to go study. What kind of friend are <i>you</i> being here?</div></div>
+        <div class="sit" data-sit><div class="sn">SITUATION 03</div>
+          <div class="st">Your parents ask for help with a household task.</div>
+          <div class="sd">The east direction. <b>"Do your duties in the family"</b> is literally in the text. Not because you're a servant — because you're part of something that holds you up. And their side of the care runs back to you.</div></div>
+      </div>
+      <p class="sub" data-anim style="margin-top:14px">Talk it through <span class="gold">before</span> you tap. Your answer matters more than the sutta's.</p>
+    </div>
+  </section>
+
+  <!-- 11 BUILD YOUR COMPASS -->
+  <section class="slide" data-slide data-init="build">
+    <div class="inner">
+      <div class="eyebrow" data-anim>make it yours</div>
+      <h2 data-anim style="margin-bottom:16px">Build your own compass.</h2>
+      <div class="buildwrap">
+        <div data-anim>
+          <div class="mymap" id="mymap"><div class="core">ME</div></div>
+        </div>
+        <div data-anim>
+          <p class="sub" style="margin-top:0;color:var(--cream)">Type a real name — a parent, a teacher, a coach, a friend — and drop them onto your map.</p>
+          <div class="namebox">
+            <input id="nameIn" type="text" maxlength="22" placeholder="type a name…" autocomplete="off">
+            <button class="btn" id="addPin">add →</button>
+          </div>
+          <p class="buildhint" id="buildHint">For each one, say out loud: one way you can show them <span class="gold">respect</span>, <span class="teal">kindness</span>, or <span class="vio">responsibility</span> this week.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 DISCUSSION -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>talk it out · pairs, then the room</div>
+      <h2 data-anim style="margin-bottom:4px">Your turn.</h2>
+      <div class="prompts">
+        <div class="prompt" data-anim><span class="q">1</span><p>Which of the six directions do you <span class="gold">neglect</span> most? Be honest.</p></div>
+        <div class="prompt" data-anim><span class="q">2</span><p>Have you ever been one of the <span class="coral">four fakes</span> to someone? Which one?</p></div>
+        <div class="prompt" data-anim style="grid-column:1/-1"><span class="q">3</span><p>What should a parent or teacher give <span class="teal">you</span> in return — and is it fair to expect it?</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 EXIT TICKET -->
+  <section class="slide center" data-slide data-init="exit">
+    <div class="inner">
+      <div class="eyebrow c" data-anim>exit ticket</div>
+      <h2 data-anim>Say it in your<br>own words.</h2>
+      <p class="sub" data-anim style="text-align:center;margin:14px auto 0;max-width:40ch">We saw the one-line version at the start. Now that you've walked the whole compass — write it as <span class="gold">you'd</span> say it.</p>
+      <div class="exitbox" data-anim>
+        <div class="el">finish this</div>
+        <div class="eq">The main message of the Siṅgālasutta is…</div>
+        <div class="exitline"></div><div class="exitline" style="width:70%"></div>
+      </div>
+      <button class="btn teal" data-anim id="keyBtn" style="margin-top:22px">compare with the key idea</button>
+      <div class="keyidea" id="keyidea">
+        <p>True happiness and success come from <span class="gold">building healthy relationships</span> and acting responsibly toward others — <span class="teal">not merely from rituals</span>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 CLOSE / NEXT -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>end of session 1</div>
+      <h2 data-anim style="margin-bottom:6px">You are the centre<br>of six directions.</h2>
+      <p class="sub" data-anim style="color:var(--cream);max-width:46ch">Not because you're the most important — because that's where the responsibility lands. <span class="gold">Six ways to be someone worth having around.</span></p>
+      <div class="upnext">
+        <div class="up" data-anim><div class="un">NEXT SESSION</div><div class="ut">Friends, for real — the four fakes &amp; the four true-hearted</div></div>
+        <div class="up" data-anim><div class="un">THEN</div><div class="ut">Parents &amp; teachers — respect that runs both ways</div></div>
+        <div class="up" data-anim><div class="un">AND</div><div class="ut">The things that drain a life — the six ways to lose it all</div></div>
+      </div>
+      <p class="tiny" data-anim style="margin-top:20px">siṅgālasutta · DN 31 · "the layperson's code of discipline"</p>
+    </div>
+  </section>
+
+</div>
+
+<div class="dots" id="dots"></div>
+<div class="nav"><button id="prev">‹</button><span class="counter" id="counter">01 / 14</span><button id="next">›</button></div>
+<div class="kbhint">← → arrows · space · swipe</div>
+
+<script>
+const slides=[...document.querySelectorAll('[data-slide]')];
+const dotsWrap=document.getElementById('dots'),counter=document.getElementById('counter');
+const prevB=document.getElementById('prev'),nextB=document.getElementById('next');
+let idx=0;const inited=new Set();
+const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+slides.forEach((_,i)=>{const d=document.createElement('i');d.onclick=()=>go(i);dotsWrap.appendChild(d)});
+const dots=[...dotsWrap.children];
+function go(n){
+  n=Math.max(0,Math.min(slides.length-1,n));
+  slides[idx].classList.remove('active');idx=n;
+  const s=slides[idx];s.classList.add('active');
+  const els=[...s.querySelectorAll('[data-anim]')];
+  els.forEach(e=>e.classList.remove('in'));
+  els.forEach((e,i)=>setTimeout(()=>e.classList.add('in'),reduce?0:80*i));
+  dots.forEach((d,i)=>d.classList.toggle('on',i===idx));
+  counter.textContent=String(idx+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  prevB.disabled=idx===0;nextB.disabled=idx===slides.length-1;
+  const k=s.dataset.init;if(k&&!inited.has(k)){inited.add(k);(initers[k]||(()=>{}))(s);}
+}
+nextB.onclick=()=>go(idx+1);prevB.onclick=()=>go(idx-1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(idx+1);}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(idx-1);}
+  if(e.key==='Home')go(0);if(e.key==='End')go(slides.length-1);
+});
+let tx=0;addEventListener('touchstart',e=>tx=e.changedTouches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>60)go(idx+(dx<0?1:-1));},{passive:true});
+
+const initers={};
+
+const DIRS=[
+  {k:"E",g:"🌅",n:"Parents",c:"EAST",t:"East · Parents",
+   d:"Where the sun rises — where <b>you</b> came from. Support them, do your part at home, keep the family name good, be worth their trust.<br><br><span style='color:var(--teal)'>Their care for you:</span> protection from harm, an education, teaching you right from wrong, and eventually your freedom."},
+  {k:"S",g:"📚",n:"Teachers",c:"SOUTH",t:"South · Teachers",
+   d:"Show up. Pay attention. Be willing to be taught — that's the whole deal.<br><br><span style='color:var(--teal)'>Their care for you:</span> to train you well, make sure you actually grasp it, teach you everything they know, and speak well of you."},
+  {k:"W",g:"💞",n:"Partner",c:"WEST",t:"West · Partner",
+   d:"For your age: the person you're closest to, or one day will be. Respect. Loyalty. No contempt. Not treating them as less.<br><br><span style='color:var(--teal)'>Their care runs back the same way.</span> The sutta is unusually equal here for its time."},
+  {k:"N",g:"🤝",n:"Friends",c:"NORTH",t:"North · Friends",
+   d:"Be generous. Speak kindly. Actually help. Treat them as your equal — and be the same person behind their back.<br><br><span style='color:var(--teal)'>Their care for you:</span> protection when you're careless, a safe place, and staying when things go bad."},
+  {k:"D",g:"🛠️",n:"Workers &<br>helpers",c:"BELOW",t:"Below · Workers & helpers",
+   d:"Anyone who does things <i>for</i> you — staff, cleaners, delivery drivers, the people who serve you food. Give them work they can do, feed them, pay them, care for them when sick.<br><br><span style='color:var(--teal)'>Today:</span> how do you speak to someone serving you when nobody's watching?"},
+  {k:"U",g:"🕊️",n:"Mentors &<br>guides",c:"ABOVE",t:"Above · Mentors & guides",
+   d:"The people who point you at something bigger — spiritual teachers, mentors, guides. Support them; be open to what they offer.<br><br><span style='color:var(--teal)'>Their care for you:</span> to keep you from harm, teach you what's good, and clearing up your confusion."},
+];
+
+// intro pills → key line
+initers.intro=(s)=>{
+  const pills=[...s.querySelectorAll('[data-p]')],key=s.querySelector('#introKey'),hint=s.querySelector('#introHint');
+  const seen=new Set();
+  pills.forEach((p,i)=>{
+    p.onclick=()=>{
+      p.classList.add('on');seen.add(i);
+      if(seen.size===pills.length){key.classList.add('on');hint.style.opacity='0';}
+    };
+  });
+};
+
+// why six · light the axes
+initers.whysix=(s)=>{
+  const dots=[...s.querySelectorAll('.cdot')],btn=s.querySelector('#sixBtn');
+  let busy=false;
+  btn.onclick=()=>{
+    if(busy)return;busy=true;let i=0;
+    const step=()=>{
+      if(i<dots.length){dots[i].classList.add('lit');i++;setTimeout(step,reduce?60:280);}
+      else{btn.textContent='six directions = all of space.';btn.disabled=true;busy=false;}
+    };step();
+  };
+};
+
+// S3 story compass
+initers.story=(s)=>{
+  const host=s.querySelector('#storyDirs'),btn=s.querySelector('#storyBtn');
+  const R=0.34;
+  const nodes=DIRS.map((d,i)=>{
+    const a=-Math.PI/2 + i*(2*Math.PI/6);
+    const el=document.createElement('div');
+    el.style.cssText="position:absolute;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);"+
+      "display:flex;align-items:center;justify-content:center;font-size:14px;transition:.4s;opacity:.3;z-index:2;";
+    el.textContent=d.g;
+    el.style.left=`calc(50% + ${Math.cos(a)*R*100}% - 17px)`;
+    el.style.top=`calc(50% + ${Math.sin(a)*R*100}% - 17px)`;
+    host.appendChild(el);return el;
+  });
+  let busy=false;
+  btn.onclick=()=>{
+    if(busy)return;busy=true;let i=0;
+    const step=()=>{
+      if(i<nodes.length){
+        nodes[i].style.opacity="1";
+        nodes[i].style.borderColor="var(--dawn)";
+        nodes[i].style.boxShadow="0 0 22px rgba(245,184,65,.4)";
+        i++;setTimeout(step,reduce?60:340);
+      } else {btn.textContent="…six times, every morning.";btn.disabled=true;document.body.classList.add('dawn');busy=false;}
+    };step();
+  };
+};
+
+// S4 vote
+initers.vote=(s)=>{
+  const out=s.querySelector('#voteout');
+  s.querySelectorAll('[data-v]').forEach(o=>{
+    o.onclick=()=>{
+      s.querySelectorAll('[data-v]').forEach(x=>x.classList.remove('picked'));
+      o.classList.add('picked');out.classList.add('on');
+    };
+  });
+};
+
+// S5 reframe
+initers.reframe=(s)=>{
+  const p=s.querySelector('#afterPanel'),b=s.querySelector('#reframeBtn');
+  b.onclick=()=>{p.classList.add('show');b.textContent="\u201chonour is conduct, not a gesture.\u201d";b.disabled=true;};
+};
+
+// S6 compass
+initers.compass=(s)=>{
+  const c=s.querySelector('#compass'),detail=s.querySelector('#dirDetail'),cnt=s.querySelector('#dirCount');
+  const R=0.36; const seen=new Set();
+  DIRS.forEach((d,i)=>{
+    const a=-Math.PI/2 + i*(2*Math.PI/6);
+    // spoke
+    const sp=document.createElement('div');
+    sp.className='spoke';
+    sp.style.transform=`rotate(${a}rad)`;
+    c.appendChild(sp);
+    // node
+    const el=document.createElement('div');
+    el.className='dir';
+    el.innerHTML=`<span class="dg">${d.g}</span><span class="dn">${d.n}</span><span class="dc">${d.c}</span>`;
+    el.style.left=`calc(50% + ${Math.cos(a)*R*100}%)`;
+    el.style.top=`calc(50% + ${Math.sin(a)*R*100}%)`;
+    el.onclick=()=>{
+      el.classList.add('on');sp.classList.add('on');seen.add(i);
+      detail.innerHTML=`<div class="mono" style="font-size:11px;color:var(--dawn);letter-spacing:.12em">${d.c}</div>
+        <h3 style="font-family:'Space Grotesk';font-size:clamp(20px,2.5vw,30px);font-weight:600;margin:8px 0 10px">${d.t}</h3>
+        <p style="font-size:14.5px;line-height:1.6;color:var(--mute)">${d.d}</p>`;
+      cnt.textContent=seen.size+' / 6 uncovered';
+      if(seen.size===6){cnt.innerHTML='<span style="color:var(--dawn)">all six — that\u2019s the whole map of a life.</span>';document.body.classList.add('dawn');}
+    };
+    c.appendChild(el);
+  });
+};
+
+// S7 reciprocity
+initers.recip=(s)=>{
+  const ar=s.querySelector('#recArrows');
+  setTimeout(()=>ar.classList.add('on'),700);
+};
+
+// S9 friend game
+initers.friend=(s)=>{
+  const rounds=[
+    {q:"\u201cSend it. She totally deserves it \u2014 you're never wrong.\u201d",real:false,k:"flatterer",
+     w:"The flatterer \u2014 backs you <i>even when you're in the wrong</i>. And the tell: praises you to your face, trashes you behind your back. Check the other group chat."},
+    {q:"\u201cThat was a bad idea and I'm telling you because I like you.\u201d",real:true,k:"true",
+     w:"True-hearted \u2014 tells you what's actually good for you, even when it's awkward."},
+    {q:"\u201cCan I borrow it? \u2026again? I'll get you back one day, promise.\u201d",real:false,k:"taker",
+     w:"The taker \u2014 always takes, gives little back. Watch the pattern, not the one favour."},
+    {q:"\u201cI'll totally help you move. I'll definitely be there. 100%.\u201d (never shows)",real:false,k:"talker",
+     w:"The talker \u2014 huge promises, no follow-through. Words are cheap; watch the feet."},
+    {q:"\u201cYou looked sad today. I'm not leaving until you talk.\u201d",real:true,k:"true",
+     w:"True-hearted \u2014 same in your joy AND your sorrow. Stays when it's not fun."},
+    {q:"\u201cCome on, one drink. Skip class. Live a little.\u201d",real:false,k:"reckless",
+     w:"The reckless companion \u2014 only around for the trouble. Vanishes when it costs them."},
+  ];
+  let i=0,score=0,lock=false;
+  const fq=s.querySelector('#fq'),feed=s.querySelector('#ffeed'),sc=s.querySelector('#fscore');
+  const bf=s.querySelector('#fFake'),br=s.querySelector('#fReal');
+  const lits=s.querySelectorAll('[data-f]');
+  function load(){lock=false;fq.textContent=rounds[i].q;feed.textContent="Which one is this?";feed.style.color="var(--mute)";}
+  function ans(saidReal){
+    if(lock)return;lock=true;
+    const r=rounds[i],ok=(saidReal===r.real);
+    if(ok)score++;
+    feed.innerHTML=(ok?'<span style="color:var(--teal)">\u2713 </span>':'<span style="color:var(--coral)">\u2717 </span>')+r.w;
+    sc.textContent=score+' / '+rounds.length;
+    lits.forEach(l=>{if(l.dataset.f===r.k)l.classList.add('lit');});
+    i++;
+    if(i<rounds.length)setTimeout(load,1900);
+    else setTimeout(()=>{fq.textContent="Now look at your own group chat.";
+      feed.innerHTML='You got '+score+'/'+rounds.length+'. <span style="color:var(--dawn)">The real question: which one are <i>you</i> being?</span>';},1900);
+  }
+  bf.onclick=()=>ans(false);br.onclick=()=>ans(true);load();
+};
+
+// S10 situations
+initers.sits=(s)=>{s.querySelectorAll('[data-sit]').forEach(x=>x.onclick=()=>x.classList.toggle('open'));};
+
+// S11 build
+initers.build=(s)=>{
+  const map=s.querySelector('#mymap'),input=s.querySelector('#nameIn'),btn=s.querySelector('#addPin'),hint=s.querySelector('#buildHint');
+  let n=0;
+  function add(){
+    const v=(input.value||'').trim();
+    if(!v)return;
+    const a=-Math.PI/2 + n*(2*Math.PI/6) + (n>=6?0.5:0);
+    const R=36 + (n>=6?8:0);
+    const p=document.createElement('div');
+    p.className='pin';p.textContent=v;
+    p.style.left=`calc(50% + ${Math.cos(a)*R}%)`;
+    p.style.top=`calc(50% + ${Math.sin(a)*R}%)`;
+    map.appendChild(p);
+    requestAnimationFrame(()=>{p.classList.add('on');p.style.transform='translate(-50%,-50%) scale(1)';});
+    input.value='';n++;
+    if(n===1)hint.innerHTML='Good. Now say one way you\u2019ll show <span class="gold">respect</span>, <span class="teal">kindness</span> or <span class="vio">responsibility</span> to them \u2014 out loud, this week.';
+    if(n>=4)hint.innerHTML='That\u2019s your compass. <span class="gold">You\u2019re the centre \u2014 which means the responsibility is yours.</span>';
+    document.body.classList.add('dawn');
+  }
+  btn.onclick=add;
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')add();});
+};
+
+// S13 exit
+initers.exit=(s)=>{
+  s.querySelector('#keyBtn').onclick=()=>{
+    s.querySelector('#keyidea').classList.add('show');
+    const b=s.querySelector('#keyBtn');b.textContent='\u2713';b.disabled=true;
+    document.body.classList.add('dawn');
+  };
+};
+
+// ambient stars
+const cv=document.getElementById('sky'),ctx=cv.getContext('2d');let W,H,stars=[];
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+resize();addEventListener('resize',resize);
+if(!reduce){
+  for(let i=0;i<70;i++)stars.push({x:Math.random(),y:Math.random()*0.85,r:Math.random()*1.3+0.3,
+    p:Math.random()*Math.PI*2,sp:Math.random()*0.015+0.004});
+  (function tick(){
+    ctx.clearRect(0,0,W,H);
+    const dawn=document.body.classList.contains('dawn');
+    stars.forEach(s=>{
+      s.p+=s.sp;
+      const tw=0.35+Math.sin(s.p)*0.3;
+      ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,7);
+      ctx.fillStyle=dawn?`rgba(245,184,65,${tw*0.5})`:`rgba(233,240,249,${tw*0.55})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(tick);
+  })();
+}
+go(0);
+</script>
+</body>
+</html>
