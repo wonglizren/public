@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>True North — The Four True-Hearted Friends · Session 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0B1120;--night2:#070C16;--card:#141E33;--card2:#1B2942;--line:#2A3B5C;
+  --dawn:#F5B841;--dawn2:#FFD37A;--teal:#45C7B8;--coral:#F0785C;--violet:#8B7FE8;
+  --cream:#E9F0F9;--mute:#8CA0BF;--max:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--night2);color:var(--cream);font-family:"Inter",system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none}
+.horizon{position:fixed;left:50%;bottom:-30vh;transform:translateX(-50%);width:120vw;height:60vh;z-index:0;pointer-events:none;
+  background:radial-gradient(55% 70% at 50% 100%, rgba(139,127,232,.14), rgba(69,199,184,.07) 45%, transparent 70%);transition:1.4s}
+body.dawn .horizon{background:radial-gradient(55% 70% at 50% 100%, rgba(245,184,65,.30), rgba(69,199,184,.12) 48%, transparent 72%)}
+.deck{position:relative;z-index:2;height:100%}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  padding:clamp(24px,5vw,78px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .55s}
+.slide.active{opacity:1;visibility:visible;pointer-events:auto}
+.inner{width:100%;max-width:var(--max);margin:0 auto}
+.eyebrow{font-family:"JetBrains Mono",monospace;font-size:clamp(10px,1.05vw,13px);letter-spacing:.24em;text-transform:uppercase;
+  color:var(--dawn);display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--teal)}
+.eyebrow.c{justify-content:center}
+h1{font-family:"Space Grotesk",sans-serif;font-weight:700;line-height:.98;font-size:clamp(46px,9vw,118px);letter-spacing:-.03em}
+h2{font-family:"Space Grotesk",sans-serif;font-weight:600;line-height:1.04;font-size:clamp(28px,5vw,60px);letter-spacing:-.02em}
+.lede{font-size:clamp(17px,2.05vw,25px);line-height:1.45;color:var(--cream);max-width:36ch;margin-top:8px}
+.sub{font-size:clamp(15px,1.8vw,21px);line-height:1.55;color:var(--mute);max-width:46ch;margin-top:18px}
+.gold{color:var(--dawn)}.teal{color:var(--teal)}.coral{color:var(--coral)}.vio{color:var(--violet)}
+.i{font-style:italic}
+.mono{font-family:"JetBrains Mono",monospace;letter-spacing:.05em}
+.tiny{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.05em;color:var(--mute)}
+[data-anim]{opacity:0;transform:translateY(22px);transition:opacity .65s,transform .65s cubic-bezier(.2,.7,.2,1)}
+.slide.active [data-anim].in{opacity:1;transform:none}
+.center{align-items:center;text-align:center}.center .inner{display:flex;flex-direction:column;align-items:center}
+.nav{position:fixed;z-index:30;right:clamp(18px,3vw,38px);bottom:clamp(18px,3vw,34px);display:flex;gap:10px;align-items:center}
+.nav button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);
+  color:var(--cream);font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.nav button:hover{border-color:var(--dawn);color:var(--dawn);transform:translateY(-2px)}
+.nav button:disabled{opacity:.3;cursor:default;transform:none;border-color:var(--line);color:var(--cream)}
+.counter{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--mute);min-width:46px;text-align:center}
+.dots{position:fixed;z-index:30;left:50%;transform:translateX(-50%);bottom:20px;display:flex;gap:6px}
+.dots i{width:6px;height:6px;border-radius:2px;background:var(--line);cursor:pointer;transition:.25s}
+.dots i.on{background:var(--dawn);width:20px}
+.kbhint{position:fixed;z-index:30;left:clamp(18px,3vw,38px);bottom:clamp(20px,3vw,32px);font-family:"JetBrains Mono",monospace;font-size:11px;color:#54678A}
+.btn{font-family:"Inter";font-weight:600;font-size:clamp(14px,1.45vw,17px);color:var(--night2);
+  background:var(--dawn);border:none;border-radius:10px;padding:12px 22px;cursor:pointer;transition:.18s}
+.btn:hover{background:var(--dawn2);transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn.ghost{background:transparent;color:var(--cream);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--teal);color:var(--teal);background:transparent}
+.btn.teal{background:var(--teal);color:var(--night2)}
+.btn.teal:hover{background:#6ad9cb}
+/* recap pills */
+.pillrow{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}
+.pill3{display:flex;align-items:center;gap:12px;border-radius:14px;border:1px solid var(--line);background:var(--card);
+  padding:15px 22px;cursor:pointer;transition:.3s}
+.pill3:hover{border-color:var(--dawn);transform:translateY(-3px)}
+.pill3 .pg{font-size:22px}
+.pill3 .pt{font-family:"Space Grotesk";font-weight:600;font-size:clamp(15px,1.75vw,19px)}
+.pill3.on{background:var(--card2);border-color:var(--teal);box-shadow:0 0 26px rgba(69,199,184,.18)}
+.pillnote{margin-top:22px;font-size:clamp(15px,1.8vw,20px);line-height:1.5;color:var(--cream);
+  border-left:2px solid var(--dawn);padding-left:16px;max-width:52ch;opacity:0;transform:translateY(10px);transition:.8s}
+.pillnote.on{opacity:1;transform:none}
+/* constellation */
+.constwrap{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center;width:100%}
+.const{position:relative;width:min(50vh,440px);aspect-ratio:1;margin:0 auto}
+.cline{position:absolute;height:1px;background:linear-gradient(90deg,rgba(69,199,184,.0),rgba(69,199,184,.35),rgba(69,199,184,.0));
+  transform-origin:left center;opacity:0;transition:1s}
+.const.linked .cline{opacity:1}
+.star{position:absolute;width:120px;height:120px;margin:-60px 0 0 -60px;left:50%;top:50%;border-radius:20px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;padding:10px;
+  border:1px solid var(--line);background:var(--card);transition:.3s;z-index:2}
+.star:hover{transform:scale(1.06);border-color:var(--dawn)}
+.star .sg{font-size:24px;line-height:1}
+.star .sn{font-family:"Space Grotesk";font-weight:600;font-size:13.5px;line-height:1.15}
+.star .sp{font-family:"JetBrains Mono";font-size:8.5px;letter-spacing:.08em;color:var(--mute)}
+.star.on{background:var(--card2);border-color:var(--dawn);box-shadow:0 0 34px rgba(245,184,65,.28)}
+.northpt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;
+  border:1px solid var(--teal);background:var(--card2);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1}
+.northpt b{font-family:"Space Grotesk";font-size:19px}
+.northpt small{font-family:"JetBrains Mono";font-size:8px;color:var(--mute);letter-spacing:.1em}
+.stardetail{min-height:230px}
+.stardetail .sd-eyebrow{font-family:"JetBrains Mono";font-size:11px;color:var(--dawn);letter-spacing:.12em;text-transform:uppercase}
+.stardetail h3{font-family:"Space Grotesk";font-size:clamp(20px,2.4vw,29px);font-weight:600;margin:8px 0 4px}
+.stardetail .gloss{font-size:13.5px;color:var(--mute);font-style:italic;margin-bottom:12px}
+.signs{list-style:none;display:flex;flex-direction:column;gap:8px}
+.signs li{font-size:14.5px;line-height:1.5;color:var(--cream);display:flex;gap:10px}
+.signs li::before{content:"✦";color:var(--teal);flex:none;font-size:12px;padding-top:2px}
+.starcount{font-family:"JetBrains Mono";font-size:11px;color:var(--mute);margin-top:14px}
+/* game */
+.fgame{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:start;width:100%}
+.fcard{border-radius:18px;border:1px solid var(--line);background:var(--card);padding:26px;text-align:center;min-height:170px;
+  display:flex;flex-direction:column;justify-content:center}
+.fquote{font-family:"Space Grotesk";font-size:clamp(16px,1.95vw,21px);font-weight:500;line-height:1.4;font-style:italic}
+.fourbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.fb{border-radius:12px;border:1px solid var(--line);background:var(--card2);padding:13px 10px;cursor:pointer;transition:.2s;
+  font-family:"Space Grotesk";font-weight:600;font-size:clamp(12.5px,1.4vw,15px);color:var(--cream);text-align:center}
+.fb:hover{border-color:var(--dawn);transform:translateY(-2px)}
+.fb.pick-ok{border-color:var(--teal);background:rgba(69,199,184,.14)}
+.fb.pick-no{border-color:var(--coral);background:rgba(240,120,92,.10)}
+.ffeed{font-size:14.5px;line-height:1.5;color:var(--mute);min-height:66px;margin-top:14px}
+.fscore{font-family:"JetBrains Mono";font-size:11px;color:var(--mute);margin-top:6px}
+/* contrast */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:22px;width:100%;margin-top:14px}
+.voice{border-radius:18px;border:1px solid var(--line);background:var(--card);padding:24px;min-height:180px;transition:.5s}
+.voice .vl{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.13em;text-transform:uppercase;margin-bottom:10px}
+.voice.good .vl{color:var(--teal)}
+.voice.bad .vl{color:var(--coral)}
+.voice p{font-family:"Space Grotesk";font-size:clamp(16px,1.95vw,21px);font-weight:500;font-style:italic;line-height:1.4;color:var(--cream)}
+.voice .vs{font-size:13px;color:var(--mute);margin-top:12px;font-style:normal;font-family:"Inter";line-height:1.5}
+.voice.dim{opacity:.25;filter:blur(1px)}
+.voice.dim.show{opacity:1;filter:none}
+.situ{border-radius:14px;border:1px dashed var(--line);background:var(--card);padding:16px 20px;width:100%;
+  font-size:clamp(14px,1.7vw,18px);color:var(--cream);line-height:1.5}
+.situ b{color:var(--dawn)}
+/* red flags */
+.flagwrap{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;width:100%}
+.flagcloud{position:relative;min-height:clamp(220px,34vh,300px);border-radius:18px;border:1px dashed var(--line);
+  background:rgba(255,255,255,.015);padding:18px;display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start}
+.flag{border-radius:20px;border:1px solid rgba(240,120,92,.5);background:rgba(240,120,92,.10);color:var(--cream);
+  font-size:13px;padding:8px 14px;opacity:0;transform:scale(.6);transition:.45s cubic-bezier(.3,1.2,.5,1)}
+.flag.on{opacity:1;transform:scale(1)}
+.namebox{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.namebox input{flex:1;min-width:180px;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--cream);
+  font-family:"Inter";font-size:15px;padding:12px 14px;outline:none;transition:.2s}
+.namebox input:focus{border-color:var(--dawn)}
+/* mirror */
+.mirrorwrap{width:100%}
+.mrow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.mcard{border-radius:16px;border:1px solid var(--line);background:var(--card);padding:18px 14px;cursor:pointer;transition:.25s;
+  text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
+.mcard:hover{border-color:var(--dawn);transform:translateY(-3px)}
+.mcard .mg{font-size:26px}
+.mcard .mt{font-family:"Space Grotesk";font-weight:600;font-size:clamp(13px,1.5vw,16px);line-height:1.15}
+.mcard.sel{border-color:var(--dawn);background:var(--card2);box-shadow:0 0 26px rgba(245,184,65,.22)}
+.promise{margin-top:18px;border-radius:14px;border:1px solid var(--teal);background:rgba(69,199,184,.08);
+  padding:16px 20px;font-size:clamp(14px,1.7vw,18px);line-height:1.5;color:var(--cream);opacity:0;transition:.6s;max-width:70ch}
+.promise.on{opacity:1}
+.promise b{color:var(--teal)}
+/* prompts */
+.prompts{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;margin-top:16px}
+.prompt{border-radius:14px;padding:18px 20px;border:1px solid var(--line);background:var(--card);display:flex;gap:12px;align-items:flex-start}
+.prompt .q{font-family:"Space Grotesk";font-weight:700;color:var(--dawn);font-size:24px;line-height:.95;flex:none}
+.prompt p{font-size:clamp(13.5px,1.55vw,17px);line-height:1.45;color:var(--cream)}
+/* quiet slide */
+.quietbox{border-radius:18px;border:1px dashed var(--line);background:var(--card);padding:28px 30px;max-width:760px;margin-top:20px}
+.quietbox .ql{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.14em;color:var(--teal);text-transform:uppercase;margin-bottom:10px}
+.quietbox p{font-size:clamp(16px,1.95vw,22px);line-height:1.55;color:var(--cream)}
+.upnext{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;margin-top:18px}
+.up{border-radius:14px;border:1px solid var(--line);background:var(--card);padding:16px 18px}
+.up .un{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.12em;color:var(--teal)}
+.up .ut{font-family:"Space Grotesk";font-size:15.5px;font-weight:600;margin-top:5px;line-height:1.2}
+@media (max-width:880px){
+  .constwrap,.fgame,.flagwrap{grid-template-columns:1fr;gap:22px}
+  .duo{grid-template-columns:1fr}
+  .mrow{grid-template-columns:1fr 1fr}
+  .prompts,.upnext{grid-template-columns:1fr}
+  .pillrow{flex-direction:column}
+  .kbhint{display:none}
+  .star{width:96px;height:96px;margin:-48px 0 0 -48px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.001s!important}}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="horizon"></div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide center" data-slide>
+    <div class="inner">
+      <div class="eyebrow c" data-anim>siṅgālasutta series · session 2</div>
+      <h1 data-anim>True North</h1>
+      <p class="lede" data-anim style="margin:20px auto 0;text-align:center;max-width:40ch">
+        The sutta describes <span class="gold">four friends who are true-hearted</span>. Tonight we meet them — and ask ourselves a gentle question: <span class="teal">who are they in our lives?</span></p>
+      <p class="tiny" data-anim style="margin-top:26px">press → or swipe to begin</p>
+    </div>
+  </section>
+
+  <!-- 2 RECAP -->
+  <section class="slide" data-slide data-init="recap">
+    <div class="inner">
+      <div class="eyebrow" data-anim>a moment to remember · tap each one</div>
+      <h2 data-anim>Where we left off.</h2>
+      <div class="pillrow" data-anim>
+        <div class="pill3" data-p><span class="pg">🧭</span><span class="pt">Six directions — six relationships</span></div>
+        <div class="pill3" data-p><span class="pg">🤲</span><span class="pt">Honour is conduct, not a gesture</span></div>
+        <div class="pill3" data-p><span class="pg">⭐</span><span class="pt">North = friends &amp; companions</span></div>
+      </div>
+      <div class="pillnote" id="recapNote">Tonight we stay in the <span class="gold">north</span> — and look closely at what the sutta says a real friend looks like.</div>
+    </div>
+  </section>
+
+  <!-- 3 WARMUP -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>warm-up · take your time</div>
+      <h2 data-anim>Think of a friend<br>who has <span class="teal">stayed</span>.</h2>
+      <p class="sub" data-anim style="color:var(--cream)">Through a rough patch. Through a move, a fallout, a bad year. Someone who's still here.</p>
+      <p class="sub" data-anim>What do you think made them stay? <span class="i">And — softer question — what made <span class="gold">you</span> worth staying for?</span></p>
+      <p class="tiny" data-anim style="margin-top:22px">no need to answer aloud — just hold someone in mind.</p>
+    </div>
+  </section>
+
+  <!-- 4 THE TEXT -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>what the sutta actually says</div>
+      <h2 data-anim>Four friends.<br><span class="gold">Sixteen small signs.</span></h2>
+      <p class="sub" data-anim style="color:var(--cream);max-width:50ch">The sutta names <b>four good-hearted friends</b>, and gives each one four ways to be recognised — sixteen signs in all, drawn from watching how a person actually behaves.</p>
+      <p class="sub" data-anim>Everything on the next screen is <span class="teal">straight from the text</span>. Nothing added, nothing modernised — that part comes later, and it'll be your job, not ours.</p>
+    </div>
+  </section>
+
+  <!-- 5 CONSTELLATION -->
+  <section class="slide" data-slide data-init="const">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the four true-hearted · tap each star</div>
+      <h2 data-anim style="margin-bottom:8px">Your constellation.</h2>
+      <div class="constwrap">
+        <div data-anim>
+          <div class="const" id="constel">
+            <div class="northpt"><b>N</b><small>FRIENDS</small></div>
+          </div>
+        </div>
+        <div data-anim>
+          <div class="stardetail" id="starDetail">
+            <div class="sd-eyebrow">tap a star to begin</div>
+            <h3>Four kinds of true-hearted friend.</h3>
+            <p class="gloss">Each one is known by four signs — things they do, not things they say.</p>
+          </div>
+          <div class="starcount" id="starCount">0 / 4 met</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 GAME -->
+  <section class="slide" data-slide data-init="game">
+    <div class="inner">
+      <div class="eyebrow" data-anim>which friend is this? · 6 gentle rounds</div>
+      <h2 data-anim style="margin-bottom:16px">You'll know them<br>by what they <span class="teal">do</span>.</h2>
+      <div class="fgame">
+        <div data-anim>
+          <div class="fcard">
+            <div class="fquote" id="fq">You're anxious about something coming up. A friend offers their place as a quiet refuge, and keeps an eye on your things while you find your feet.</div>
+          </div>
+          <div class="fourbtns">
+            <button class="fb" data-a="helper">🛡️ The Helper</button>
+            <button class="fb" data-a="ww">🌗 Same in Good &amp; Bad Times</button>
+            <button class="fb" data-a="counsel">🕯️ The Good Counsel</button>
+            <button class="fb" data-a="symp">💛 The Sympathiser</button>
+          </div>
+          <div class="ffeed" id="ffeed">Take a guess — there's no losing here.</div>
+          <div class="fscore" id="fscore">round 1 of 6</div>
+        </div>
+        <div data-anim>
+          <div class="situ" style="margin-bottom:14px"><b>How to play:</b> read each moment, talk it over, then tap the friend you think it shows. Every answer comes with the sign from the text.</div>
+          <div class="situ">A thought to keep nearby: <span class="i">these are also six chances to ask — "have I ever been this friend for someone?"</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 CONTRAST -->
+  <section class="slide" data-slide data-init="duo">
+    <div class="inner">
+      <div class="eyebrow" data-anim>one moment, two voices</div>
+      <h2 data-anim style="margin-bottom:14px">Same situation.<br>Listen to the difference.</h2>
+      <div class="situ" data-anim>You're about to make a choice that could genuinely hurt your future. <b>Two friends are standing next to you.</b></div>
+      <div class="duo">
+        <div class="voice good" data-anim>
+          <div class="vl">the good counsel</div>
+          <p>"Wait — can we think about this? I don't think it's a good idea, and I'll tell you why."</p>
+          <div class="vs">The text's signs: restrains you from doing wrong · encourages what's good · tells you what you haven't heard · points out the higher path.</div>
+        </div>
+        <div class="voice bad dim" id="badVoice" data-anim>
+          <div class="vl">a foe in a friend's shape</div>
+          <p>"Go for it. You only live once — don't be boring."</p>
+          <div class="vs">The sutta counts <b>keeping harmful company</b> among the perils to your conduct. What might this voice be hoping for?</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;width:100%;margin-top:18px">
+        <button class="btn ghost" data-anim id="duoBtn">hear the other voice →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 RED FLAGS -->
+  <section class="slide" data-slide data-init="flags">
+    <div class="inner">
+      <div class="eyebrow" data-anim>your wisdom now · not the sutta's</div>
+      <h2 data-anim style="margin-bottom:10px">What are <span class="coral">your</span> red flags?</h2>
+      <div class="flagwrap">
+        <div data-anim>
+          <p class="sub" style="margin-top:0;color:var(--cream)">The sutta gives its signs. You've lived your own. In your experience — what's a quiet clue that someone might be <span class="i">a foe in a friend's shape</span>?</p>
+          <div class="namebox">
+            <input id="flagIn" type="text" maxlength="42" placeholder="type a red flag…" autocomplete="off">
+            <button class="btn" id="addFlag">add →</button>
+          </div>
+          <p class="tiny" style="margin-top:12px">say each one aloud as you add it — someone in the room may need to hear it.</p>
+        </div>
+        <div data-anim>
+          <div class="flagcloud" id="flagCloud"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 QUIET REFLECTION -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>a quieter minute · just for you</div>
+      <h2 data-anim>When someone<br>didn't stay.</h2>
+      <div class="quietbox" data-anim>
+        <div class="ql">no sharing needed · reflect privately</div>
+        <p>The text describes a friend who <span class="teal">does not abandon you in your troubles</span>. Most of us have known a moment when that friend was missing.</p>
+        <p style="margin-top:14px">If you're willing — think of that moment. <span class="gold">Which of the four traits was absent?</span> And what did its absence teach you about what you now look for?</p>
+      </div>
+      <p class="tiny" data-anim style="margin-top:18px">we'll sit with this for a minute — no one has to speak.</p>
+    </div>
+  </section>
+
+  <!-- 10 MIRROR -->
+  <section class="slide" data-slide data-init="mirror">
+    <div class="inner">
+      <div class="eyebrow" data-anim>the mirror · make it yours</div>
+      <h2 data-anim style="margin-bottom:6px">Which friend do <span class="gold">you</span><br>want to be?</h2>
+      <p class="sub" data-anim style="margin-top:4px">Not which one you already are — which one you'd like to <span class="teal">grow toward</span>. Pick one.</p>
+      <div class="mirrorwrap" data-anim>
+        <div class="mrow">
+          <div class="mcard" data-m="The Helper"><span class="mg">🛡️</span><span class="mt">The Helper</span></div>
+          <div class="mcard" data-m="Same in Good & Bad Times"><span class="mg">🌗</span><span class="mt">Same in Good<br>&amp; Bad Times</span></div>
+          <div class="mcard" data-m="The Good Counsel"><span class="mg">🕯️</span><span class="mt">The Good<br>Counsel</span></div>
+          <div class="mcard" data-m="The Sympathiser"><span class="mg">💛</span><span class="mt">The<br>Sympathiser</span></div>
+        </div>
+        <div class="namebox" style="margin-top:18px">
+          <input id="actIn" type="text" maxlength="80" placeholder="one small thing you could do this week…" autocomplete="off">
+          <button class="btn teal" id="addAct">make it a quiet promise →</button>
+        </div>
+        <div class="promise" id="promise"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 DISCUSSION -->
+  <section class="slide" data-slide>
+    <div class="inner">
+      <div class="eyebrow" data-anim>talk it over · pairs, then the room</div>
+      <h2 data-anim style="margin-bottom:4px">Open questions.</h2>
+      <div class="prompts">
+        <div class="prompt" data-anim><span class="q">1</span><p>The Good Counsel <span class="i">restrains you from doing wrong</span>. Has a friend ever stopped you from something — and were you grateful then, or only later?</p></div>
+        <div class="prompt" data-anim><span class="q">2</span><p>The Sympathiser <span class="i">doesn't rejoice at your misfortune</span>. Why do you think that even needed to be said — 2,500 years ago, and now?</p></div>
+        <div class="prompt" data-anim><span class="q">3</span><p>Is it possible to be a true-hearted friend to someone who isn't one back? <span class="teal">Should you be?</span></p></div>
+        <div class="prompt" data-anim><span class="q">4</span><p>Sixteen signs — and all of them are <span class="gold">actions</span>, not feelings. What do you make of that?</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 CLOSE -->
+  <section class="slide" data-slide data-init="close">
+    <div class="inner">
+      <div class="eyebrow" data-anim>end of session 2</div>
+      <h2 data-anim style="margin-bottom:6px">Friends are found —<br>and <span class="teal">become</span>.</h2>
+      <p class="sub" data-anim style="color:var(--cream);max-width:46ch">The four true-hearted aren't just people to look for. They're four ways of being that anyone can practise — starting with one quiet promise this week.</p>
+      <div class="upnext">
+        <div class="up" data-anim><div class="un">NEXT SESSION</div><div class="ut">Parents &amp; teachers — care that runs both ways</div></div>
+        <div class="up" data-anim><div class="un">THEN</div><div class="ut">The six drains — what quietly empties a life</div></div>
+        <div class="up" data-anim><div class="un">AND</div><div class="ut">Your own code — putting the whole compass together</div></div>
+      </div>
+      <p class="tiny" data-anim style="margin-top:20px">siṅgālasutta series · session 2 of the compass</p>
+    </div>
+  </section>
+
+</div>
+
+<div class="dots" id="dots"></div>
+<div class="nav"><button id="prev">‹</button><span class="counter" id="counter">01 / 12</span><button id="next">›</button></div>
+<div class="kbhint">← → arrows · space · swipe</div>
+
+<script>
+const slides=[...document.querySelectorAll('[data-slide]')];
+const dotsWrap=document.getElementById('dots'),counter=document.getElementById('counter');
+const prevB=document.getElementById('prev'),nextB=document.getElementById('next');
+let idx=0;const inited=new Set();
+const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+slides.forEach((_,i)=>{const d=document.createElement('i');d.onclick=()=>go(i);dotsWrap.appendChild(d)});
+const dots=[...dotsWrap.children];
+function go(n){
+  n=Math.max(0,Math.min(slides.length-1,n));
+  slides[idx].classList.remove('active');idx=n;
+  const s=slides[idx];s.classList.add('active');
+  const els=[...s.querySelectorAll('[data-anim]')];
+  els.forEach(e=>e.classList.remove('in'));
+  els.forEach((e,i)=>setTimeout(()=>e.classList.add('in'),reduce?0:80*i));
+  dots.forEach((d,i)=>d.classList.toggle('on',i===idx));
+  counter.textContent=String(idx+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  prevB.disabled=idx===0;nextB.disabled=idx===slides.length-1;
+  const k=s.dataset.init;if(k&&!inited.has(k)){inited.add(k);(initers[k]||(()=>{}))(s);}
+}
+nextB.onclick=()=>go(idx+1);prevB.onclick=()=>go(idx-1);
+document.addEventListener('keydown',e=>{
+  const tag=(document.activeElement||{}).tagName;
+  if(tag==='INPUT')return;
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(idx+1);}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(idx-1);}
+  if(e.key==='Home')go(0);if(e.key==='End')go(slides.length-1);
+});
+let tx=0;addEventListener('touchstart',e=>tx=e.changedTouches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>60)go(idx+(dx<0?1:-1));},{passive:true});
+
+const initers={};
+
+// data — the four, signs kept faithful to the text
+const FRIENDS=[
+  {k:"helper",g:"🛡️",n:"The Helper",p:"upakāra",gl:"the one who shows up",
+   signs:["Guards you when you're off guard","Protects your things when you're careless with them",
+          "Becomes a refuge when you're afraid","When there's something to be done, gives more support than you asked for"]},
+  {k:"ww",g:"🌗",n:"Same in Good & Bad Times",p:"\u201cweal and woe\u201d",gl:"the one who stays",
+   signs:["Trusts you with their secrets","Keeps yours safe","Does not abandon you in your troubles",
+          "Stays loyal even at real cost to themselves"]},
+  {k:"counsel",g:"🕯️",n:"The Good Counsel",p:"atthakkhāyī",gl:"the one who's honest",
+   signs:["Restrains you from doing wrong","Encourages you toward what's good",
+          "Tells you things you hadn't heard","Points out the higher path"]},
+  {k:"symp",g:"💛",n:"The Sympathiser",p:"anukampaka",gl:"the one who's glad for you",
+   signs:["Doesn't rejoice at your misfortune","Genuinely celebrates when things go well for you",
+          "Stops others from speaking ill of you","Praises those who speak well of you"]},
+];
+
+// 2 recap
+initers.recap=(s)=>{
+  const pills=[...s.querySelectorAll('[data-p]')],note=s.querySelector('#recapNote');
+  const seen=new Set();
+  pills.forEach((p,i)=>{p.onclick=()=>{p.classList.add('on');seen.add(i);
+    if(seen.size===pills.length)note.classList.add('on');};});
+};
+
+// 5 constellation
+initers.const=(s)=>{
+  const c=s.querySelector('#constel'),detail=s.querySelector('#starDetail'),cnt=s.querySelector('#starCount');
+  const pos=[[50,10],[88,42],[62,88],[14,60]]; // irregular, like a real constellation
+  const seen=new Set();
+  // connecting lines between consecutive stars
+  for(let i=0;i<pos.length;i++){
+    const [x1,y1]=pos[i],[x2,y2]=pos[(i+1)%pos.length];
+    const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy),ang=Math.atan2(dy,dx);
+    const ln=document.createElement('div');ln.className='cline';
+    ln.style.left=x1+'%';ln.style.top=y1+'%';ln.style.width=len+'%';
+    ln.style.transform=`rotate(${ang}rad)`;
+    c.appendChild(ln);
+  }
+  FRIENDS.forEach((f,i)=>{
+    const el=document.createElement('div');el.className='star';
+    el.innerHTML=`<span class="sg">${f.g}</span><span class="sn">${f.n}</span><span class="sp">${f.p}</span>`;
+    el.style.left=pos[i][0]+'%';el.style.top=pos[i][1]+'%';
+    el.onclick=()=>{
+      el.classList.add('on');seen.add(i);
+      detail.innerHTML=`<div class="sd-eyebrow">from the text · four signs</div>
+        <h3>${f.g} ${f.n}</h3>
+        <p class="gloss">${f.gl}</p>
+        <ul class="signs">${f.signs.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+      cnt.textContent=seen.size+' / 4 met';
+      if(seen.size===4){cnt.innerHTML='<span style="color:var(--dawn)">all four — your true north.</span>';
+        c.classList.add('linked');document.body.classList.add('dawn');}
+    };
+    c.appendChild(el);
+  });
+};
+
+// 6 game — soft language throughout
+initers.game=(s)=>{
+  const rounds=[
+    {q:"You're anxious about something coming up. A friend offers their place as a quiet refuge, and keeps an eye on your things while you find your feet.",a:"helper",
+     w:"The Helper — the text says this friend <b>becomes a refuge when you're afraid</b>, and guards you and yours when you're off guard."},
+    {q:"You're about to make a choice that could hurt your future. A friend gently steps in, tells you why, and suggests a better way.",a:"counsel",
+     w:"The Good Counsel — <b>restrains you from doing wrong</b> and encourages what's good. The honesty that costs them something."},
+    {q:"You land the thing you've dreamed of. One friend is genuinely thrilled — and when others start trash-talking your success, they quietly shut it down.",a:"symp",
+     w:"The Sympathiser — <b>celebrates your good fortune</b> and <b>stops others speaking ill of you</b>. Gladness without envy."},
+    {q:"A year ago you told them something you'd never said out loud. To this day, no one else has ever heard it.",a:"ww",
+     w:"Same in Good &amp; Bad Times — this friend <b>keeps your secrets safe</b>, and trusts you with their own."},
+    {q:"You're short of what you need for something that matters. Without being asked twice, a friend quietly covers more than you needed.",a:"helper",
+     w:"The Helper — when there's something to be done, the text says this friend <b>provides more support than was asked</b>."},
+    {q:"You fail — publicly. One friend doesn't laugh, doesn't post, doesn't enjoy it even a little. When you bounce back, they're the loudest cheer.",a:"symp",
+     w:"The Sympathiser — <b>does not rejoice at your misfortune</b>, and delights when things turn good again."},
+  ];
+  let i=0,score=0,lock=false;
+  const fq=s.querySelector('#fq'),feed=s.querySelector('#ffeed'),sc=s.querySelector('#fscore');
+  const btns=[...s.querySelectorAll('.fb')];
+  function load(){lock=false;fq.textContent=rounds[i].q;
+    feed.textContent="Take a guess — there's no losing here.";
+    btns.forEach(b=>b.classList.remove('pick-ok','pick-no'));
+    sc.textContent='round '+(i+1)+' of '+rounds.length;}
+  btns.forEach(b=>{
+    b.onclick=()=>{
+      if(lock)return;lock=true;
+      const r=rounds[i],ok=b.dataset.a===r.a;
+      if(ok){score++;b.classList.add('pick-ok');}
+      else{b.classList.add('pick-no');btns.find(x=>x.dataset.a===r.a).classList.add('pick-ok');}
+      feed.innerHTML=(ok?'<span style="color:var(--teal)">lovely — yes. </span>':'<span style="color:var(--dawn)">close — here\u2019s the one: </span>')+r.w;
+      i++;
+      if(i<rounds.length)setTimeout(load,2400);
+      else setTimeout(()=>{fq.textContent="And the quieter question underneath…";
+        feed.innerHTML='You matched '+score+' of '+rounds.length+'. <span style="color:var(--dawn)">Now — which of these have <i>you</i> been for someone lately?</span>';
+        sc.textContent='';},2400);
+    };
+  });
+  load();
+};
+
+// 7 duo
+initers.duo=(s)=>{
+  const bv=s.querySelector('#badVoice'),btn=s.querySelector('#duoBtn');
+  btn.onclick=()=>{bv.classList.add('show');btn.textContent='which voice is easier to hear in the moment?';btn.disabled=true;};
+};
+
+// 8 flags
+initers.flags=(s)=>{
+  const cloud=s.querySelector('#flagCloud'),input=s.querySelector('#flagIn'),btn=s.querySelector('#addFlag');
+  function add(){
+    const v=(input.value||'').trim();if(!v)return;
+    const f=document.createElement('div');f.className='flag';f.textContent='🚩 '+v;
+    cloud.appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
+    input.value='';input.focus();
+  }
+  btn.onclick=add;input.addEventListener('keydown',e=>{if(e.key==='Enter')add();});
+};
+
+// 10 mirror
+initers.mirror=(s)=>{
+  const cards=[...s.querySelectorAll('[data-m]')],input=s.querySelector('#actIn'),
+    btn=s.querySelector('#addAct'),prom=s.querySelector('#promise');
+  let chosen=null;
+  cards.forEach(c=>{c.onclick=()=>{cards.forEach(x=>x.classList.remove('sel'));c.classList.add('sel');chosen=c.dataset.m;};});
+  function make(){
+    const v=(input.value||'').trim();
+    if(!chosen){prom.classList.add('on');prom.innerHTML='pick a friend-type above first — which one calls to you?';return;}
+    if(!v){prom.classList.add('on');prom.innerHTML='and one small action — tiny is perfect.';return;}
+    prom.classList.add('on');
+    prom.innerHTML='This week, I\u2019ll practise being <b>'+chosen+'</b> — <span class="i">\u201c'+v+'\u201d</span>';
+    btn.textContent='promised ✦';btn.disabled=true;input.disabled=true;
+    document.body.classList.add('dawn');
+  }
+  btn.onclick=make;input.addEventListener('keydown',e=>{if(e.key==='Enter')make();});
+};
+
+initers.close=()=>{document.body.classList.add('dawn');};
+
+// ambient stars
+const cv=document.getElementById('sky'),ctx=cv.getContext('2d');let W,H,stars=[];
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+resize();addEventListener('resize',resize);
+if(!reduce){
+  for(let i=0;i<80;i++)stars.push({x:Math.random(),y:Math.random()*0.85,r:Math.random()*1.4+0.3,
+    p:Math.random()*Math.PI*2,sp:Math.random()*0.015+0.004});
+  (function tick(){
+    ctx.clearRect(0,0,W,H);
+    const dawn=document.body.classList.contains('dawn');
+    stars.forEach(s=>{
+      s.p+=s.sp;const tw=0.35+Math.sin(s.p)*0.3;
+      ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,7);
+      ctx.fillStyle=dawn?`rgba(245,184,65,${tw*0.5})`:`rgba(233,240,249,${tw*0.55})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(tick);
+  })();
+}
+go(0);
+</script>
+</body>
+</html>
